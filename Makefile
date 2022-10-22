@@ -1,7 +1,7 @@
 SHELL = /bin/zsh
 PROG = todo
-PREFIX ?= /home/huck/.local/bin
-TODOLIST = /home/huck/info/notes/todo
+PREFIX ?= /usr/local/bin
+TODOLIST = $(HOME)/.local/share/odot/todo
 
 install : main.c input.c file.c
 	gcc *.c -o '$(PREFIX)/$(PROG)'
@@ -12,7 +12,6 @@ header : todo.h
 clean : 
 	rm *.gch
 	rm "$(PREFIX)/$(PROG)"
-	cp $(TODOLIST).md $(TODOLIST)
 
 test :
 	todo
