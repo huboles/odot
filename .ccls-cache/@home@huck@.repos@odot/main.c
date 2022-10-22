@@ -6,17 +6,17 @@ extern int urgency;
 int main(int argc, char *argv[]){
     char op;
     int length,i;
+    struct task t;
     note = (char *) malloc(MAXLINE * sizeof(char));
     o = (char *) malloc (3 * sizeof(char));
 
-    getnote(argc, argv);
-    length = strlen(note)+1;
+    t = maketask(argc, argv);
     getopt(argc, argv);
     
     for (i = 0; i < strlen(o); i++)
         switch (o[i]) {
             case 'n':
-                if (listcheck() == 0){
+                if (listcheck(t) == 0){
                     add();
                     printf("\033[32mAdded to list\033[0m: %s\n", note);
                 } else {
@@ -26,7 +26,7 @@ int main(int argc, char *argv[]){
                 }
                 break;
             case 'd':
-                if (listcheck() == 1) {
+                if (listcheck(t) == 1) {
                     rem();
                     printf("\033[36mRemoved from list\033[0m: %s\n", note);
                 } else {

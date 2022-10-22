@@ -2,14 +2,17 @@
 
 enum color {BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE};
 
-int listcheck(void){
-    char *s = malloc(MAXLINE * sizeof(char));
+
+int listcheck(struct task t){
+    char *s = malloc(t.length* sizeof(char));
 
     fp = fopen(TODOLIST, "r");
+    if (fp == NULL)
+        error('f');
 
-    while (fgets(s, MAXLINE, fp) != NULL){
+    while (fgets(s, t.length, fp) != NULL){
         s[strlen(s) - 1] = 0;
-        if (strcmp(note, s) == 0){
+        if (strcmp(t.task, s) == 0){
             free(s);
             return 1;
         }
@@ -27,26 +30,38 @@ int geturgency(int n){
         else
             return GREEN;
     } else {
-        printf("ERROR: urgency OUT OF RANGE");
-        return -1;
+        error('r');
     }
-        
 }
 
 char *gettime(void){
-    char *c = malloc(64*sizeof(char));
-    time_t t = time(NULL);
+    struct tm *s;
+    time_t *t ;
+    char *c = malloc(16*sizeof(char));
+
+    *t = time(NULL);
     if (t == ((t) - 1)){
         error('t');
     }
+    
+    s = localtime(t);
 
-    c = ctime(&t);
+    strftime(c, 16, "%y-%m-%d %H:%M", s);
 
     if (c == NULL){
         error('t');
     }
 
     return c;
+}
 
-
+int linecount(FILE *fp){
+    int i = 0;
+    char c;
+    while ((c = fgetc(fp)) != EOF){
+        if (c == '\n')
+            i++;
+    }
+    rewind(fp);
+    return i;
 }

@@ -8,10 +8,8 @@ enum color {BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE};
 
 void add(void){
     fp = fopen(TODOLIST, "a");
-    if (fp == NULL){
-        printf("ERROR: COULD NOT ACCESS FILE: %s\n",TODOLIST);
-        return;
-    }
+    if (fp == NULL)
+        error('f');
     fputs(strcat(note,"\n"),fp);
     fclose(fp);
 }
@@ -21,10 +19,8 @@ void rem(void){
     FILE *tmp = fopen("temp", "w");
 
     fp = fopen(TODOLIST, "r");
-    if (fp == NULL){
-        printf("ERROR: COULD NOT ACCESS FILE: %s\n",TODOLIST);
-        return;
-    }
+    if (fp == NULL)
+        error('f');
 
 
     while (fgets(s, MAXLINE, fp) != NULL){
@@ -46,11 +42,8 @@ void rem(void){
 void show(void){
     char *c = (char *) malloc(MAXLINE * sizeof(int));
 
-    fp = fopen(TODOLIST,"r");
-    if (fp == NULL){
-        printf("ERROR: COULD NOT ACCESS FILE %s",TODOLIST);
-        return;
-    }
+    if (fp == NULL)
+        error('f');
 
     while (fgets(c, MAXLINE, fp) != NULL )
         printf("\t\t\033[1;3%im*\033[0m %s",geturgency(urgency), c);

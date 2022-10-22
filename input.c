@@ -36,7 +36,7 @@ void getopt(int n, char *arg[]){
             if (isdigit((int) *++arg)){
                 urgency = (int) *arg;
             } else {
-                printf("Non-integer argument for -i: %s\n", *arg);
+                error('r');
             }
         } else {
             urgency = 5;
