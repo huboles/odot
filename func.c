@@ -33,3 +33,20 @@ int geturgency(int n){
         
 }
 
+char *gettime(void){
+    char *c = malloc(64*sizeof(char));
+    time_t t = time(NULL);
+    if (t == ((t) - 1)){
+        error('t');
+    }
+
+    c = ctime(&t);
+
+    if (c == NULL){
+        error('t');
+    }
+
+    return c;
+
+
+}

@@ -15,7 +15,8 @@ void rem(void);
 void show(void);
 int listcheck(void);
 int geturgency(int);
-void dialogue(char, char *);
+
+void error(char);
 
 char *note, *o;
 int urgency;
