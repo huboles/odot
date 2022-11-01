@@ -6,12 +6,13 @@ extern FILE *fp;
 
 enum color {BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE};
 
+
 void add(void){
     fp = fopen(TODOLIST, "a");
-    if (fp == NULL)
-        error('f');
-    fputs(strcat(note,"\n"),fp);
-    fclose(fp);
+    if (fp != NULL){
+        fputs(strcat(note,"\n"),fp);
+        fclose(fp);
+    }
 }
 
 void rem(void){
@@ -19,8 +20,6 @@ void rem(void){
     FILE *tmp = fopen("temp", "w");
 
     fp = fopen(TODOLIST, "r");
-    if (fp == NULL)
-        error('f');
 
 
     while (fgets(s, MAXLINE, fp) != NULL){
@@ -40,14 +39,30 @@ void rem(void){
 }
 
 void show(void){
-    char *c = (char *) malloc(MAXLINE * sizeof(int));
+    char *c;
 
-    if (fp == NULL)
-        error('f');
+    c = (char *) malloc(MAXLINE * sizeof(int));
 
+    fp = fopen(TODOLIST,"r");
     while (fgets(c, MAXLINE, fp) != NULL )
-        printf("\t\t\033[1;3%im*\033[0m %s",geturgency(urgency), c);
+        printf("\t\t\033[1;35m*\033[0m %s", c);
     fclose(fp);
     free(c);
 }
 
+int listcheck(void){
+    char *s;
+
+    fp = fopen(TODOLIST, "r");
+    s = (char *) malloc(MAXLINE * sizeof(char));
+
+    while (fgets(s, MAXLINE, fp) != NULL){
+        s[strlen(s) - 1] = 0;
+        if (strcmp(note, s) == 0){
+            free(s);
+            return 1;
+        }
+    }
+    free(s);
+    return 0;
+}

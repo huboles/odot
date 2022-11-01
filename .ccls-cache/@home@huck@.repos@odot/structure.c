@@ -16,13 +16,11 @@ struct task maketask(int n, char **arg){
     return temp;
 }
 
-void puttask(struct task n, FILE *fp){
-
+void puttask(struct task n){
     fprintf(fp, "%i\t%s\t%s\t%s\t%i\n",n.length,n.task,n.date,n.due,n.urgency);
-    
 }
 
-struct task gettask(FILE *fp){
+struct task gettask(void){
     struct task tmp;
     
     fscanf(fp,"%i\t%s\t%s\t%s\t%i\n",&tmp.length,tmp.task,tmp.date,tmp.due,&tmp.urgency);

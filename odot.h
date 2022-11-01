@@ -23,15 +23,15 @@ void add(void);
 void rem(void);
 void show(void);
 
-int listcheck(struct task);
+int listcheck(void);
 int geturgency(int);
 char *gettime(void);
 
 void error(char);
 
 struct task maketask(int n, char **arg);
-void puttask(struct task n, FILE *fp);
-struct task gettask(FILE *fp);
+void puttask(struct task n);
+struct task gettask(void);
 
 char *note, *o;
 int urgency;
