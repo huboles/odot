@@ -9,11 +9,9 @@
 #define TODOLIST "/home/huck/.local/state/odot/todo"
 
 struct task {
-    int length;
     char *task;
-    char *date;
-    char *due;
-    int urgency;
+    int date;
+    char *group;
 };
 
 char *getnote(int, char *[]);
@@ -23,7 +21,7 @@ void add(void);
 void rem(void);
 void show(void);
 
-int listcheck(void);
+int listcheck(struct task);
 int geturgency(int);
 char *gettime(void);
 

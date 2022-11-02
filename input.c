@@ -32,15 +32,6 @@ void getopt(int n, char *arg[]){
             strcat(o,"s");
         }
 
-        if (strchr(c,'i') != NULL){
-            if (isdigit((int) *++arg)){
-                urgency = (int) *arg;
-            } else {
-                error('r');
-            }
-        } else {
-            urgency = 5;
-        }
         free(c);
     }
 
