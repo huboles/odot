@@ -8,10 +8,10 @@ enum color {BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE};
 
 
 void add(struct task t, int size){
-    int l,m,h,i,len;
-    FILE *fcopy;
-    char *s;
-    h = len = linecount();
+    int l,m,h,i;
+    FILE *fcopy = fopen("/tmp/fcopy", "w");
+    char *s = malloc(MAXLINE * sizeof(char));
+    h = size;
     m = h / 2;
     l = 0;
 
@@ -32,22 +32,20 @@ void add(struct task t, int size){
     }
 
     fseek(fp, 0, SEEK_SET);
-    fcopy = fopen("/tmp/fcopy", "w");
 
-    for (i = 0; i < len;){
+    for (i = 0; i <= (size + 1); i++){
         if (i == m){
             fprintf(fp, "%s\t%i\t%s\n",t.task,t.date,t.group);
         } else {
             fgets(s, MAXLINE, fp);
             fputs(s, fcopy);
-            i++;
         }
     }
     fclose(fp);
     fclose(fcopy);
     remove(TODOLIST);
     rename("/tmp/fcopy", TODOLIST);
-
+    free(s);
     return;
 }
 
@@ -82,7 +80,6 @@ void show(void){
     fp = fopen(TODOLIST,"r");
     while (fgets(c, MAXLINE, fp) != NULL )
         printf("\t\t\033[1;35m*\033[0m %s", c);
-    fclose(fp);
     free(c);
 }
 
