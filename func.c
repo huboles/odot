@@ -34,6 +34,6 @@ int linecount(void){
         if (c == '\n')
             i++;
     }
-    rewind(fp);
+    fseek(fp,0,SEEK_SET);
     return i;
 }
