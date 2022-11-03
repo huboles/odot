@@ -17,7 +17,7 @@ struct task {
 char *getnote(int, char *[]);
 void getopt(int, char *[]);
 
-void add(void);
+void add(struct task, int);
 void rem(void);
 void show(void);
 
@@ -27,7 +27,10 @@ char *gettime(void);
 
 void error(char);
 
-struct task maketask(int n, char **arg);
+int linecount(void);
+void dialogue(char *, char *, int);
+
+struct task maketask(char *, char *);
 void puttask(struct task n);
 struct task gettask(void);
 

@@ -1,6 +1,7 @@
 #include "odot.h"
 
 enum color {BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE};
+extern FILE *fp;
 
 
 int listcheck(struct task t){
@@ -26,7 +27,7 @@ char *gettime(void){
     return NULL;
 }
 
-int linecount(FILE *fp){
+int linecount(void){
     int i = 0;
     char c;
     while ((c = fgetc(fp)) != EOF){

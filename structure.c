@@ -4,26 +4,24 @@ extern int urgency;
 extern FILE *fp;
 
 
-struct task maketask(int n, char **arg){
-    struct task temp;
+struct task maketask(char *task, char *group){
+    struct task tmp;
 
-    temp.task = getnote(n,arg);
-    temp.length = strlen(temp.task);
-    temp.date = gettime();
-    temp.due = 0;
-    temp.urgency = urgency;
+    tmp.task = task;
+    tmp.date = 0;
+    tmp.group = group;
 
-    return temp;
+    return tmp;
 }
 
 void puttask(struct task n){
-    fprintf(fp, "%i\t%s\t%s\t%s\t%i\n",n.length,n.task,n.date,n.due,n.urgency);
+    fprintf(fp, "%s\t%i\t%s\n",n.task,n.date,n.group);
 }
 
 struct task gettask(void){
     struct task tmp;
     
-    fscanf(fp,"%i\t%s\t%s\t%s\t%i\n",&tmp.length,tmp.task,tmp.date,tmp.due,&tmp.urgency);
+    fscanf(fp,"%s\t%i\t%s\n",tmp.task,&tmp.date,tmp.group);
 
     return tmp;
 }

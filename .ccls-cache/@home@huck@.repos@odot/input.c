@@ -34,8 +34,5 @@ void getopt(int n, char *arg[]){
 
         free(c);
     }
-
-    if (strlen(o) == 0)
-        o = (listcheck() == 0) ? "n" : "d";
 }
 

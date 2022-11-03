@@ -7,12 +7,30 @@ extern FILE *fp;
 enum color {BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE};
 
 
-void add(void){
-    fp = fopen(TODOLIST, "a");
-    if (fp != NULL){
-        fputs(strcat(note,"\n"),fp);
-        fclose(fp);
+void add(struct task t, int size){
+    int l,m,h,i;
+
+    h = linecount();
+    m = h / 2;
+    l = 0;
+
+    while (h != m  && m != l){
+        i = strcmp(t.task,gettask().task);
+
+        if (i < 0) {
+            h = m;
+        } else if (i > 0) {
+            l = m;
+        } else { 
+            dialogue("Task already on list",t.task, BLUE);
+            return;
+        }
+
+        m = (h + l)/2;
     }
+
+    puttask(t);
+    return;
 }
 
 void rem(void){
@@ -50,19 +68,3 @@ void show(void){
     free(c);
 }
 
-int listcheck(void){
-    char *s;
-
-    fp = fopen(TODOLIST, "r");
-    s = (char *) malloc(MAXLINE * sizeof(char));
-
-    while (fgets(s, MAXLINE, fp) != NULL){
-        s[strlen(s) - 1] = 0;
-        if (strcmp(note, s) == 0){
-            free(s);
-            return 1;
-        }
-    }
-    free(s);
-    return 0;
-}
