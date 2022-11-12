@@ -12,6 +12,7 @@ int listcheck(struct task t){
         error('f');
 
     while (fgets(s, strlen(t.task), fp) != NULL){
+        /* strip newline for comparison, return 1 if string matches */
         s[strlen(s) - 1] = 0;
         if (strcmp(t.task, s) == 0){
             free(s);
@@ -27,7 +28,7 @@ char *gettime(void){
     return NULL;
 }
 
-int linecount(void){
+int linecount(FILE *fp){
     int i = 0;
     char c;
     while ((c = fgetc(fp)) != EOF){

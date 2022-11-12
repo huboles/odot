@@ -16,7 +16,7 @@ void add(struct task t, int size){
     l = 0;
 
     while (!(h == m && m == l)){
-        i = strcmp(t.task,gettask().task);
+        i = strcmp(t.task,gettask(fp).task);
 
         if (i < 0) {
             h = m;
@@ -79,7 +79,7 @@ void show(void){
 
     fp = fopen(TODOLIST,"r");
     while (fgets(c, MAXLINE, fp) != NULL )
-        printf("\t\t\033[1;35m*\033[0m %s", c);
+        formattask(gettask(fp));
     free(c);
 }
 
