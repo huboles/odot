@@ -21,4 +21,3 @@ void formattask(struct task t){
     printf("* %s\t%s\t%i", t.task, t.group, t.date);
 }
 
-gT

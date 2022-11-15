@@ -17,11 +17,11 @@ struct task {
 char *getnote(int, char *[]);
 short getopt(int, char *[]);
 
-void add(struct task, int);
-void rem(void);
-void show(void);
+void add(struct task, FILE *);
+void rem(FILE *);
+void show(FILE *);
 
-int listcheck(struct task);
+int listcheck(struct task, FILE *);
 int geturgency(int);
 char *gettime(void);
 
@@ -29,10 +29,10 @@ void dialogue(char *, char *, int);
 void formattask(struct task t);
 void error(int);
 
-int linecount(FILE);
+int linecount(FILE *);
 
 struct task maketask(char *, char *);
-void puttask(struct task n);
+void puttask(struct task n, FILE*);
 struct task gettask(FILE *);
 
 char *note, *o;

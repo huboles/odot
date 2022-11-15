@@ -28,18 +28,13 @@ short getopt(int n, char *arg[]){
         return 1;
     
     while (--n > 0 && (*++arg)[0] == '-'){
-        c = malloc(strlen(*arg) * sizeof(char));
-        c = *arg;
-
-        options += strchr(c, 'd') ? 4 : 2;
-        options += strchr(c, 's') ? 1 : 0;
-
+        /* if theres a d delete, otherwise add */
+        options += strchr(*arg, 'd') ? 4 : 2;
+        options += strchr(*arg, 's') ? 1 : 0;
         /* if theres a g then add the next argument as a group */
-        if (strchr(c,'g') != NULL){
-            group = *++arg;
+        if (strchr(*arg,'g') != NULL){
+            strcpy(group,*++arg);
         }
-
-        free(c);
     }
 
     return options;
@@ -64,4 +59,8 @@ struct task gettask(FILE *fp){
     fscanf(fp,"%s\t%s\t%i\n",tmp.task,tmp.group,&tmp.date);
 
     return tmp;
+}
+
+void puttask(struct task t, FILE *fp){
+    fprintf(fp,"%s\t%s\t%i\n",t.task,t.group,t.date);
 }

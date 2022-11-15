@@ -1,84 +1,66 @@
 #include "odot.h"
 
 
-extern char *note;
 extern FILE *fp;
 
 enum color {BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE};
 
-
-void add(struct task t, int size){
-    int l,m,h,i;
-    FILE *fcopy = fopen("/tmp/fcopy", "w");
-    char *s = malloc(MAXLINE * sizeof(char));
-    h = size;
-    m = h / 2;
-    l = 0;
-
-    while (!(h == m && m == l)){
-        i = strcmp(t.task,gettask(fp).task);
-
-        if (i < 0) {
-            h = m;
-        } else if (i > 0) {
-            l = m;
-        } else { 
-            dialogue("Task already on list",t.task, BLUE);
-            return;
+void add(struct task t, FILE *fp){
+    char *c = malloc(strlen(t.task)*sizeof(char));
+    FILE *fc = fopen("/tmp/odot", "w");
+    int i = 0;
+    
+    while (fgets(c,strlen(t.task),fp) != NULL){
+        switch (listcheck(t,fp)){
+            case 3:
+                dialogue("Already on todo list", t.task, CYAN);
+                break;
+            case 1:
+                dialogue("Already on list in a different group", gettask(fp).group, YELLOW);
+                /* confirm(); */
+                break;
+            default:
+                if (i == 0 && strcmp(c,t.task) > 0){
+                    puttask(t,fc);
+                    ++i;
+                }
         }
-
-        m = (h + l)/2;
-        fseek(fp, m, SEEK_SET);
+        puttask(gettask(fp), fc);
     }
 
-    fseek(fp, 0, SEEK_SET);
-
-    for (i = 0; i <= (size + 1); i++){
-        if (i == m){
-            fprintf(fp, "%s\t%i\t%s\n",t.task,t.date,t.group);
-        } else {
-            fgets(s, MAXLINE, fp);
-            fputs(s, fcopy);
-        }
-    }
+    free(c);
     fclose(fp);
-    fclose(fcopy);
+    fclose(fc);
     remove(TODOLIST);
-    rename("/tmp/fcopy", TODOLIST);
-    free(s);
-    return;
+    rename("/tmp/odot", TODOLIST);
+    return; 
 }
 
-void rem(void){
+
+void rem(FILE *fp){
     char *s = malloc(MAXLINE * sizeof(char));
-    FILE *tmp = fopen("temp", "w");
-
-    fp = fopen(TODOLIST, "r");
-
+    FILE *fc = fopen("/tmp/odot", "w");
 
     while (fgets(s, MAXLINE, fp) != NULL){
         s[strlen(s) - 1] = 0;
         if (strcmp(note, s) != 0){
-            fputs(strcat(s,"\n"),tmp);
+            fputs(strcat(s,"\n"),fc);
         }
     }
 
     fclose(fp);
-    fclose(tmp);
+    fclose(fc);
 
     remove (TODOLIST);
-    rename("temp", TODOLIST);
+    rename("/tmp/odot", TODOLIST);
 
     free(s);
 }
 
-void show(void){
-    char *c;
+void show(FILE *fp){
+    char *c = malloc(sizeof(char));
 
-    c = (char *) malloc(MAXLINE * sizeof(int));
-
-    fp = fopen(TODOLIST,"r");
-    while (fgets(c, MAXLINE, fp) != NULL )
+    while (fgets(c, 1, fp) != NULL )
         formattask(gettask(fp));
     free(c);
 }
