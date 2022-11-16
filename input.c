@@ -1,17 +1,27 @@
 #include "odot.h"
 
-extern char *note, *group;
-extern int urgency;
-
-char *getnote(int n, char *arg[]){
+struct task getnote(int n, char *arg[], char *group){
     char *s = malloc(MAXLINE * sizeof(char));
+    struct task tmp;
+    
+    if (n == 1)
+            printf("\nreturn from note\n");
+        return tmp;
 
-/* adds word to note if it doesn't start with - */
-    while(--n > 0 && (*++arg)[0] != '-'){
+
+    while(n-- > 0){ 
+            printf("\n%i-nloop\n",n);
+        if (*arg[0] != '-'){
             strcat(s, *arg);
             strcat(s, (n > 1) ? " " : "");
+        } else if (strcmp(*arg,"-g") == 0){
+            strcpy(group, *arg);
+        }
     }
-    return s;
+    strcpy(tmp.task, s);
+    strcpy(tmp.group, group);
+    free(s);
+    return tmp;
 }
 
 /* uses a 3 bit number to represent options
@@ -20,23 +30,23 @@ char *getnote(int n, char *arg[]){
     4 - remove from list
 */
 short getopt(int n, char *arg[]){
-    char *c;
     short options;
-
+    
+                printf("\nreturn1\n");
     /* show list if no arguments given */
     if (n == 1)
         return 1;
     
+                printf("\ncheckopt\n");
     while (--n > 0 && (*++arg)[0] == '-'){
         /* if theres a d delete, otherwise add */
-        options += strchr(*arg, 'd') ? 4 : 2;
         options += strchr(*arg, 's') ? 1 : 0;
-        /* if theres a g then add the next argument as a group */
-        if (strchr(*arg,'g') != NULL){
-            strcpy(group,*++arg);
-        }
+        options += strchr(*arg, 'n') ? 2 : 0;
+        options += strchr(*arg, 'd') ? 4 : 0;
     }
-
+                printf("%i", options);
+    if ((options - 5) > 0)
+        error(2);
     return options;
 }
 

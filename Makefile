@@ -1,13 +1,14 @@
 SHELL = /bin/zsh
-PROG = todo
+PROG = odot
 PREFIX ?= /usr/local/bin
-TODOLIST = $(HOME)/.local/share/odot/todo
+ODOT = /home/huck/.local/share/odot
+TODOLIST = $(ODOT)/todo
 
-install : main.c input.c file.c dialogue.c func.c
+install : main.c input.c file.c 
+	[[ ! -d $(TODOLIST) ]] && mkdir -p $(ODOT)
 	gcc *.c -o '$(PREFIX)/$(PROG)'
-	[[ ! -d $(TODOLIST) ]] && mkdir -p $(TODOLIST)
 
-header : todo.h
+header : odot.h
 	gcc *.h
 
 clean : 

@@ -1,67 +1,93 @@
 #include "odot.h"
 
-
-extern FILE *fp;
-
-enum color {BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE};
-
 void add(struct task t, FILE *fp){
+                    printf("\nalloc\n");
     char *c = malloc(strlen(t.task)*sizeof(char));
-    FILE *fc = fopen("/tmp/odot", "w");
+                    printf("\nfopen\n");
+    FILE *buf = fopen("odot.tmp", "w");
     int i = 0;
     
+                    printf("\nloopstart\n");
+                    int j = 0;
     while (fgets(c,strlen(t.task),fp) != NULL){
+                    printf("\n%i-nloop\n", j++);
         switch (listcheck(t,fp)){
             case 3:
                 dialogue("Already on todo list", t.task, CYAN);
-                break;
+                printf("Remove from list?");
+                if (check() == 0){
+                    break;
+                } else {
+                    puttask(gettask(fp), buf);
+                    break;
+                }
             case 1:
                 dialogue("Already on list in a different group", gettask(fp).group, YELLOW);
-                /* confirm(); */
+                if (check() == 0){
+                    puttask(t,buf);
+                    i++;
+                }
+                puttask(gettask(fp), buf);
                 break;
             default:
+                /* first time t.task is lexigraphically greater than a previous task */
                 if (i == 0 && strcmp(c,t.task) > 0){
-                    puttask(t,fc);
+                    puttask(t,buf);
                     ++i;
                 }
+                puttask(gettask(fp), buf);
+                break;
         }
-        puttask(gettask(fp), fc);
     }
 
     free(c);
     fclose(fp);
-    fclose(fc);
-    remove(TODOLIST);
-    rename("/tmp/odot", TODOLIST);
+    fclose(buf);
+    remove("/home/huck/.local/state/odot/todo");
+    rename("odot.tmp", "/home/huck/.local/state/odot/todo");
     return; 
 }
 
 
-void rem(FILE *fp){
+void rem(struct task t, FILE *fp){
     char *s = malloc(MAXLINE * sizeof(char));
-    FILE *fc = fopen("/tmp/odot", "w");
+    FILE *buf = fopen("odot.tmp", "w");
+    int i = 0;
 
     while (fgets(s, MAXLINE, fp) != NULL){
         s[strlen(s) - 1] = 0;
-        if (strcmp(note, s) != 0){
-            fputs(strcat(s,"\n"),fc);
+        if (strcmp(t.task, s) != 0){
+            fputs(strcat(s,"\n"),buf);
+        } else {
+            i++;
         }
     }
 
     fclose(fp);
-    fclose(fc);
+    fclose(buf);
 
-    remove (TODOLIST);
-    rename("/tmp/odot", TODOLIST);
+    remove ("/home/huck/.local/state/odot/todo");
+    rename("odot.tmp", "/home/huck/.local/state/odot/todo");
+
+    if (i == 0){
+        dialogue("Task not found", t.task, YELLOW);
+        printf("Add to list?");
+        if(check() == 0){
+            add(t,fp);
+        }
+    }
 
     free(s);
 }
 
-void show(FILE *fp){
+void show(char *group, FILE *fp){
     char *c = malloc(sizeof(char));
 
-    while (fgets(c, 1, fp) != NULL )
-        formattask(gettask(fp));
+    while (fgets(c, 1, fp) != NULL ){
+        if (strcmp(group, "all") == 0 || strcmp(gettask(fp).group, group) == 0){
+            formattask(gettask(fp));
+        }
+    }
     free(c);
 }
 

@@ -3,10 +3,10 @@
 #include <string.h>
 #include <ctype.h>
 #include <time.h>
+#define TODOLIST "/home/huck/.local/state/odot/todo"
 
 #define MAXLINE 1000
 #define TIME "%H:%M %m-%d-%y"
-#define TODOLIST "/home/huck/.local/state/odot/todo"
 
 struct task {
     char *task;
@@ -14,12 +14,12 @@ struct task {
     char *group;
 };
 
-char *getnote(int, char *[]);
+struct task getnote(int, char *[], char *);
 short getopt(int, char *[]);
 
 void add(struct task, FILE *);
-void rem(FILE *);
-void show(FILE *);
+void rem(struct task, FILE *);
+void show(char *group, FILE *);
 
 int listcheck(struct task, FILE *);
 int geturgency(int);
@@ -28,13 +28,10 @@ char *gettime(void);
 void dialogue(char *, char *, int);
 void formattask(struct task t);
 void error(int);
-
-int linecount(FILE *);
+int check(void);
 
 struct task maketask(char *, char *);
 void puttask(struct task n, FILE*);
 struct task gettask(FILE *);
 
-char *note, *o;
-FILE *fp;
-
+enum color {BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE};
