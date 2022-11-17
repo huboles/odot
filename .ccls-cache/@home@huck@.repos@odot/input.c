@@ -2,11 +2,11 @@
 
 struct task getnote(int n, char *arg[], char *group){
     char *note = malloc(MAXLINE * sizeof(char));
-    struct task tmp;
+    struct task *tmp;
     
     if (n == 1){
             printf("\t\treturn from note\n");
-        return tmp;
+        return *tmp;
     }
 
 
@@ -22,8 +22,7 @@ struct task getnote(int n, char *arg[], char *group){
     }
                 printf("\t%s %s getnote\n",note,group);
     tmp = maketask(note,group);
-    free(note);
-    return tmp;
+    return *tmp;
 }
 
 /* uses a 3 bit number to represent options
@@ -53,27 +52,30 @@ short getopt(int n, char *arg[]){
 }
 
 
-struct task maketask(char *task, char *group){
+struct task *maketask(char *task, char *group){
             printf("\tmaketask\n");
-    struct task tmp;
+    struct task *tmp;
     
-    tmp.task = malloc(strlen(task) * sizeof(char));
-    tmp.group = malloc(strlen(group) * sizeof(char));
+    tmp->task = malloc(strlen(task) * sizeof(char));
+    tmp->group = malloc(strlen(group) * sizeof(char));
 
-    strcpy(tmp.task,task);
-    strcpy(tmp.group,(strcmp(tmp.group,"") == 0) ? "all" : group);
+    strcpy(tmp->task,task);
+    strcpy(tmp->group,(strcmp(tmp->group,"") == 0) ? "all" : group);
 
-            printf("\t%s-task %s-group\n",tmp.task,tmp.group);
+            printf("\t%s-task %s-group\n",tmp->task,tmp->group);
 
     return tmp;
 }
 
 
-struct task gettask(char *c){
-            printf("\tgettask\n");
-    struct task tmp;
-     
-    sscanf(c,"%s\t%s",tmp.task,tmp.group);
+struct task *gettask(char *c){
+    char *task, *group;
+    task = malloc(strlen(c) * sizeof(char));
+    group = malloc(strlen(c) * sizeof(char));
+
+    sscanf(c,"%s\t%s",task,group);
+    
+    struct task *tmp = maketask(task,group);
 
     return tmp;
 }

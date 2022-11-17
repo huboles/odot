@@ -16,9 +16,9 @@ struct task {
 struct task getnote(int, char *[], char *);
 short getopt(int, char *[]);
 
-void add(struct task, FILE *);
-void rem(struct task, FILE *);
-void show(char *group, FILE *);
+void add(struct task);
+void rem(struct task);
+void show(char *group);
 
 int listcheck(struct task, char *);
 int geturgency(int);
@@ -29,8 +29,8 @@ void formattask(struct task t);
 void error(int);
 int check(void);
 
-struct task maketask(char *, char *);
+struct task *maketask(char *, char *);
 void puttask(struct task n, FILE*);
-struct task gettask(char *);
+struct task *gettask(char *);
 
 enum color {BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE};
