@@ -10,7 +10,6 @@
 
 struct task {
     char *task;
-    int date;
     char *group;
 };
 
@@ -21,7 +20,7 @@ void add(struct task, FILE *);
 void rem(struct task, FILE *);
 void show(char *group, FILE *);
 
-int listcheck(struct task, FILE *);
+int listcheck(struct task, char *);
 int geturgency(int);
 char *gettime(void);
 
@@ -32,6 +31,6 @@ int check(void);
 
 struct task maketask(char *, char *);
 void puttask(struct task n, FILE*);
-struct task gettask(FILE *);
+struct task gettask(char *);
 
 enum color {BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE};
