@@ -1,80 +1,88 @@
-#include "odot.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAXLINE 500
+#define LIST    "/home/huck/.local/state/odot/todo.txt"
+#define DONE    "/home/huck/.local/state/odot/done.txt"
+#define TMP    "/home/huck/.local/state/odot/odot.txt"
+
+int getopt(int, char **);
+char *getnote(int, char **);
+
+void addnote(char *);
+void show();
 
 int main(int argc, char *argv[]){
-                printf("\tstart\n");
-    struct task note;
-    short opt;
-    FILE *fp;
-    char *group = malloc(MAXLINE*sizeof(char));
 
-                printf("\tfopen\n");
-    fp = fopen("/home/huck/.local/state/odot/todo.txt", "w+");
-    if (!fp){
-        error(1);
+    if (argc == 1){
+        show();
+    } else {
+        addnote(getnote(argc,argv));
     }
-
-                printf("\tgetopt\n");
-    opt = getopt(argc, argv);
-
-                printf("\tgetnote\n");
-    note = getnote(argc, argv, group);
-
-    if (opt >= 4){
-                printf("\trem\n");
-        rem(note, fp);
-    } else if (opt >= 2){
-                printf("\tadd\n");
-        add(note, fp);
-    }
-
-    if (opt % 2 != 0){
-                printf("\tshow\n");
-        show(group, fp); 
-    }
-                printf("\texiting\n");
-    fclose(fp);
-    free(group);
     return 0;
 }
 
-void error(int err){
-    switch (err) {
-        case 1:
-            fprintf(stderr,"ERROR: COULD NOT ACCESS FILE: %s\n", "/home/huck/.local/state/odot/todo.txt");
-            break;
-        case 2:
-            fprintf(stderr,"ERROR: CANT ADD AND REMOVE SAME TASK\n");
-            break;
+char *getnote(int n, char *arg[]){
+    char *s = malloc(MAXLINE * sizeof(char));
+    while (--n > 0){
+        strcat(s,*++arg);
+        strcat(s,(n > 1) ? " " : "\n");
     }
-    exit(err);
+    return s;
 }
 
-void dialogue(char *m1, char *m2, int c){
-    printf("\033[1;3%im%s\033[0m: %s\n", c, m1, m2);
+void addnote(char *note){
+    int i = 0;
+    char *buf = malloc(MAXLINE * sizeof(char));
+
+    FILE *fp = fopen(LIST,"r");
+    FILE *fdone = fopen(DONE,"a");
+    FILE *tmp = fopen(TMP,"w");
+    if(!fp || !tmp || !fdone)
+        exit(1);
+
+    while(fgets(buf, MAXLINE, fp)){
+        if (strcmp(note,buf) > 0){
+            fputs(buf,tmp);
+        } else if (strcmp(note,buf) == 0){
+            fputs(note,fdone);
+            printf("Removed from list: %s", note);
+            i++;
+        } else if (strcmp(note,buf) < 0){
+            if (i == 0){
+                fputs(note,tmp);
+                printf("Added to list: %s", note);
+                i++;
+            }
+            fputs(buf,tmp);
+        }
+    }
+    if (i == 0){
+        fputs(note,tmp);
+        printf("Added to list: %s", note);
+    }
+
+    fclose(tmp);
+    fclose(fp);
+    fclose(fdone);
+    free(buf);
+    remove(LIST);
+    rename(TMP,LIST);
     return;
 }
 
-void formattask(struct task t){
-    printf("* %s\t%s\n", t.task, t.group);
+void show(void){
+    FILE *fp = fopen(LIST,"r");
+    char *buf = malloc(MAXLINE * sizeof(char));
+
+    printf("\033[36;1mTODO\033[0m:\n");
+    while(fgets(buf,MAXLINE,fp)){
+       printf("    \033[35;1m*\033[0m %s", buf);
+    }
+
+    free(buf);
+    fclose(fp);
+    return;
 }
 
-    /* Returns:
-        0 - Nothing matches
-        1 - Task matches
-        2 - Group matches
-        3 - Both match
-    */
-int listcheck(struct task t, char *c){
-    int i;
-    i += (strcmp(t.task,gettask(c).task) == 0) ? 1 : 0;
-    i += (strcmp(t.group,gettask(c).group) == 0) ? 2 : 0;
-    return i;
-}
-
-/* returns 0 for yes and 1 for no */
-int check(void){
-    printf("Continue? [y/n] (y):");
-    if (((char) getchar()) == 'n')
-        return 1;
-    return 0;
-}
