@@ -13,6 +13,8 @@ char *getnote(int, char **);
 void addnote(char *);
 void show();
 
+char *hash(char *);
+
 int main(int argc, char *argv[]){
 
     if (argc == 1){
@@ -86,3 +88,6 @@ void show(void){
     return;
 }
 
+char *hash(char *note){
+    
+}
