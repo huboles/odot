@@ -1,6 +1,6 @@
 SHELL = /bin/bash
 PROG = odot
-BINDIR ?= /bin
+BINDIR ?= /usr/bin
 STATEDIR ?= $(HOME)/.local/state
 
 

@@ -7,14 +7,10 @@ current todo list in alphabetical order.
 
 * Usage:
 
-    - Add new task to list:
+    - Add or remove a task from list:
  
-            $ odot [new task not on list]  
+            $ odot [task]  
     
-    - Remove task from list:
-    
-            $ odot [task already on list] 
-   
     - Show list:
  
             $ odot 
