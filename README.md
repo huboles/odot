@@ -26,5 +26,5 @@ current todo list in alphabetical order.
         $ make install
 
 ***odot*** stores current and completed tasks in plaintext .txt files, located at
-$HOME/.local/share/odot.
+$HOME/.local/state/odot.
 
