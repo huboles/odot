@@ -1,23 +1,30 @@
 # odot
 Todo manager written in C
 
-Usage:
+Extremely basic to use, simply call ***odot*** with a task to add or
+remove it from the list, or call ***odot*** all by iteself to see the
+current todo list in alphabetical order.
 
-  Add new task to list:
+* Usage:
+
+    - Add new task to list:
  
-    $ odot [new task not on list]  
+            $ odot [new task not on list]  
     
- Remove task from list:
-  
-    $ odot [task already on list] 
+    - Remove task from list:
+    
+            $ odot [task already on list] 
    
- Show list:
+    - Show list:
  
-    $ odot 
+            $ odot 
     
-Installation:
+* Installation:
 
-    $ git clone https://github.com/huboles/odot.git
-    $ cd odot
-    $ sudo gcc *.c -o /usr/bin/odot
-    $ mkdir $HOME/.local/state/odot
+        $ git clone https://github.com/huboles/odot.git
+        $ cd odot
+        $ make install
+
+***odot*** stores current and completed tasks in plaintext .txt files, located at
+$HOME/.local/share/odot.
+

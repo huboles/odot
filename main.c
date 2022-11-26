@@ -21,15 +21,24 @@ int main(int argc, char *argv[]){
     extern char *tmp;
 
     char *homedir = getenv("HOME");
-    list = strcat(homedir,"/.local/share/odot/todo.txt");
-    done = strcat(homedir,"/.local/share/odot/done.txt");
-    tmp = strcat(homedir,"/.local/share/odot/tmp.txt");
+
+    list = malloc((strlen(homedir)+22)*sizeof(char));
+    done = malloc((strlen(homedir)+22)*sizeof(char));
+    tmp = malloc((strlen(homedir)+21)*sizeof(char));
+
+    sprintf(list,"%s/.local/state/odot/todo.txt",homedir);
+    sprintf(done,"%s/.local/state/odot/done.txt",homedir);
+    sprintf(tmp,"%s/.local/state/odot/tmp.txt",homedir);
 
     if (argc == 1){
         show();
     } else {
         addnote(getnote(argc,argv));
     }
+
+    free(tmp);
+    free(done);
+    free(list);
     return 0;
 }
 
