@@ -16,11 +16,14 @@ current todo list in alphabetical order.
             $ odot 
     
 * Installation:
+    - Arch Linux: Available in the AUR
 
-        $ git clone https://github.com/huboles/odot.git
-        $ cd odot
-        $ sudo cc main.c -o /usr/bin/odot
-        $ mkdir $HOME/.local/state/odot
+    - Manual Installation:
+
+            $ git clone https://github.com/huboles/odot.git
+            $ cd odot
+            $ sudo cc main.c -o /usr/bin/odot
+            $ mkdir $HOME/.local/state/odot
 
 ***odot*** stores current and completed tasks in plaintext .txt files, located at
 $HOME/.local/state/odot.
