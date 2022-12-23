@@ -3,34 +3,26 @@
 /* global variables */ 
 int showdone = 0,
     showall  = 0;
+
 char    *group,
-        *task;
+        *task,
+        *action;
 
 int main(int argc, char *argv[]){
-    sqlite3 *db;
-    db = accessdb("odot.db");
-    buildtables(db);
+    if (argc == 1) help();
 
-    /* print all todo tasks if called alone */ 
-    if (argc == 1) {
-        print(db);
-        return 0;
-    }
+    sqlite3 *db;
+    db = accessdb(filepath());
+    sqlcmd(db,BUILDTABLE);
+
 
     group = malloc(MAXLINE * sizeof(char));
     task = malloc(MAXLINE * sizeof(char));
+    action = malloc(MAXLINE * sizeof(char));
     
-    char *action = malloc(100*sizeof(char));
-    
-    strcpy(action,argv[1]);
     parseopt(argc,argv);
-    struct task t = maketask(task,group);
 
-    free(task);
-    free(group);
-
-
-    operate(action,t,db);
+    operate(db);
 
     sqlite3_close(db);
     return 0;
@@ -38,8 +30,11 @@ int main(int argc, char *argv[]){
 
 void parseopt(int n, char **args){
     char c;
-    while ((c = getopt(n,args,"g:ad")) != -1){
+    while ((c = getopt(n,args,"g:adh")) != -1){
         switch (c) {
+            case 'h':
+                help();
+                break;
             case 'a':
                 showall = 1;
                 break;
@@ -47,56 +42,114 @@ void parseopt(int n, char **args){
                 showdone = 1;
                 break;
             case 'g':
-                strcpy(group,optarg);
+                sprintf(group,"%s",optarg);
                 break;
             case '?':
                 printf("Unknown Option: %c\n", optopt);
         }
     }
 
-    if (strcmp(group, "") == 0) strcpy(group,"all");
+    sprintf(group,"%s",(strcmp(group,"") == 0) ? "" : group);
+    sprintf(action,"%s",args[optind]);
 
-    for (; optind < n; optind++){
-        if (optind > 1) {
-            strcat(task,args[optind]);
-            strcat(task,(optind != n -1) ? " " : "");
-        }  
+    for (int j = optind + 1; j < n; j++){
+            strcat(task,args[j]);
+            strcat(task,(j != n-1) ? " " : "");
     }
 }
 
-struct task maketask(char *task, char *group){
-    struct task tmp;
+void operate(sqlite3 *db){
+    char *cmd = malloc(MAXLINE*sizeof(char));
 
-    tmp.task = malloc(strlen(task)*sizeof(char));
-    strcpy(tmp.task,task);
-
-    tmp.group = malloc(strlen(group)*sizeof(char));
-    strcpy(tmp.group,group);
-
-    return tmp;
-}
-
-void operate(char *action, struct task t, sqlite3 *db){
     if (strcmp(action,"new") == 0){
-        addtask(db, t);
+        sprintf(cmd,"%s%s' ,'%s', 0);",INSERT,task,group);
+        sqlcmd(db,cmd);
     } else if (strcmp(action,"done") == 0){
-        donetask(db, t);
+        sprintf(cmd,"%s%s';",DONE,task);
+        sqlcmd(db,cmd);
+        sprintf(cmd,"%s%s';", GETGROUP,task);
+        sqlgroup(db,cmd);
+        sprintf(cmd,"SELECT Done, Task FROM Tasks WHERE Task = '%s'",task);
+        printf("\n");
+        sqlprint(db,cmd);
     } else if (strcmp(action,"remove") == 0){
-        removetask(db,t);
+        sprintf(cmd,"%s%s';",DELETE,task);
+        sqlcmd(db,cmd);
     } else if (strcmp(action,"show") != 0) {
-        printf("Unknown subcommand: %s\n",action);
+        fprintf(stderr,"\033[33;1mUnknown subcommand\033[0m: %s\n",action);
     }
+    printf("\n\t\033[35;1mTODO\033[0m: \033[36m%s\033[0m\n\n",group);
     if (showall == 1) {
         if (showdone == 1) {
-            printdone(db);
+            sqlprint(db,PRINTALL);
         } else {
-            print(db);
+            sqlprint(db,PRINT);
         }
     } else {
         if (showdone == 1) {
-            printgroupdone(db,t); 
+            sprintf(cmd,"%s%s' ORDER BY Done;",PRINTGROUPALL,group);
+            sqlprint(db,cmd);
+        } else if (strcmp(group,"\t") != 0) {
+            sprintf(cmd,"%s%s';",PRINTGROUP,group);
+            sqlprint(db,cmd);
         } else {
-            printgroup(db,t);
+            sqlprint(db,PRINT);
         }
     }
+}
+
+char *filepath(void){
+    char *dir = getenv("XDG_DATA_HOME");
+    char *db = malloc(MAXLINE * sizeof(char));
+
+    if (!dir) {
+        dir = getenv("HOME");    
+        if (!dir) error(3);
+        strcat(dir,"/.local/share");
+    }
+    strcat(dir,"/odot");
+
+    DIR *test = opendir(dir);
+
+    if (test) {
+        closedir(test);
+    } else {
+        int err = mkdir(dir, 0777);
+        if (err) error(2);
+    }
+
+    sprintf(db,"%s/odot.db",dir);
+
+    return db;
+}
+
+void error(int err){
+    switch (err) {
+        case 1:
+            fprintf(stderr,"^^ SQL error ^^\n");
+            break;
+        case 2:
+            fprintf(stderr,"Could not create odot directory\n\t$XDG_DATA_HOME/odot\n");
+            break;
+        case 3:
+            fprintf(stderr,"Could not determine $HOME\n");
+            break;
+    }
+    exit(err);
+}
+
+void help(){
+    printf("Usage: odot [subcommand] (task)\n");
+    printf("\tSubcommands:\n");
+    printf("\tnew\tadd new task to database\n");
+    printf("\tdone\tmark task as done in database\n");
+    printf("\tshow\tshow tasks in database\n");
+    printf("\tremove\tremove task from database\t\n");
+    printf("\tOptions:\n");
+    printf("\t-a\tshow all groups\n");
+    printf("\t-d\talso show completed tasks\n");
+    printf("\t-g\tset group for task\n");
+    printf("\t-h\tshow this help\n");
+
+    exit(0);
 }

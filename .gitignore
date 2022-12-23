@@ -1,0 +1,9 @@
+*
+!.gitignore
+!LICENSE
+!README.md
+!Makefile
+!*.c
+!*.h
+!*.o
+sqlite3.c
