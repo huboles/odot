@@ -26,10 +26,10 @@ compile: $(CFILE)
 link: $(OBJECTS)
 	$(CC) $(OBJECTS) $(CFLAGS) -o $(PROG)
 
-build: $(CFILE) $(HEADER) sqlite3.o
+build: $(CFILE) $(HEADER) sqlite3.c
 	$(CC) $(CFILE) sqlite3.c $(CFLAGS) -o $(PROG)
 
-install: $(CFILE) $(HEADER) sqlite3.o
+install: $(CFILE) $(HEADER) sqlite3.c
 	$(CC) $(CFILE) sqlite3.c $(CFLAGS) -o $(DESTDIR)/$(PROG)
 
 debug: $(CFILE)
