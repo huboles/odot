@@ -1,0 +1,65 @@
+odot
+
+Task manager written in C
+
+Installation:
+
+    - Arch Linux: Available in the AUR
+
+    - Manual: 
+
+            # Make and enter directory for odot
+        $ mkdir odot && cd odot
+
+            # Download source files
+        $ curl "https://download.huck.website/odot-0.2.0.tar.gz" > odot-0.2.0.tar.gz
+
+                    # Optional: Download and check pgp signature
+                $ curl "https://download.huck.website/odot-0.2.0.sig" > odot-0.2.0.sig
+                $ curl "https://download.huck.website/pub.asc" > huck.asc
+                $ gpg --import huck.asc
+                $ gpg --verify odot-0.2.0.sig odot-0.2.0.tar.gz
+
+            # Unpack source files
+        $ tar -xzvf odot-0.2.0.tar.gz 
+
+            # Build odot
+        $ sudo make install
+
+Usage:
+
+    Results are modified by options preceded by a dash.
+    Odot uses the first non-option as a subcommand.
+    The rest of the line is parsed into a task.
+
+    Available commands:
+        new     Adds a new task to the list
+        done    Marks a task on the list as complete
+        show    Shows current tasks in database
+        remove  Remove task from database
+
+    Available options:
+        -g (group)  Specify group for task
+        -a          Show all groups
+        -d          Also show completed tasks
+
+Examples:
+
+    Show tasks in default group:
+        $ odot show
+
+    Add a task called 'things to do' to a group called newgroup:
+        $ odot new -g newgroup things to do
+
+    Finish a task called 'thing I did' and show other completed tasks:
+        $ odot done thing I did -d
+
+    Show all completed tasks in a group called 'tasks':
+        $ odot show -dg tasks
+
+    Show all tasks in database:
+        $ odot show -da
+        
+    Remove a task from database (completely removes task from odot's memory, useful for typos):
+        $ odot remove task I want to forget
+

@@ -1,7 +1,8 @@
 *
 !.gitignore
+!sha256sums
 !LICENSE
-!README.md
+!README
 !Makefile
 !*.c
 !*.h
