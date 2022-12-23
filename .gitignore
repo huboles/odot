@@ -6,5 +6,3 @@
 !Makefile
 !*.c
 !*.h
-!*.o
-sqlite3.c

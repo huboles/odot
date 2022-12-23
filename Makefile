@@ -27,10 +27,10 @@ link: $(OBJECTS)
 	$(CC) $(OBJECTS) $(CFLAGS) -o $(PROG)
 
 build: $(CFILE) $(HEADER) sqlite3.o
-	$(CC) $(CFILE) sqlite3.o $(CFLAGS) -o $(PROG)
+	$(CC) $(CFILE) sqlite3.c $(CFLAGS) -o $(PROG)
 
 install: $(CFILE) $(HEADER) sqlite3.o
-	$(CC) $(CFILE) sqlite3.o $(CFLAGS) -o $(DESTDIR)/$(PROG)
+	$(CC) $(CFILE) sqlite3.c $(CFLAGS) -o $(DESTDIR)/$(PROG)
 
 debug: $(CFILE)
 	$(CC) $(CFILE) sqlite3.o $(CFLAGS) -ggdb3 -Og -o $(PROG)

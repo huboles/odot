@@ -24,7 +24,11 @@ Installation:
         $ tar -xzvf odot-0.2.0.tar.gz 
 
             # Build odot
+    Global install:
         $ sudo make install
+    Local install:
+        $ make clean sql build
+            
 
 Usage:
 
