@@ -15,10 +15,10 @@ Installation:
         $ curl "https://download.huck.website/odot-0.2.0.tar.gz" > odot-0.2.0.tar.gz
 
                     # Optional: Download and check pgp signature
-                $ curl "https://download.huck.website/odot-0.2.0.sig" > odot-0.2.0.sig
+                $ curl "https://download.huck.website/odot-0.2.0.tar.gz.sig" > odot-0.2.0.tar.gz.sig
                 $ curl "https://download.huck.website/pub.asc" > huck.asc
                 $ gpg --import huck.asc
-                $ gpg --verify odot-0.2.0.sig odot-0.2.0.tar.gz
+                $ gpg --verify odot-0.2.0.tar.gz.sig odot-0.2.0.tar.gz
 
             # Unpack source files
         $ tar -xzvf odot-0.2.0.tar.gz 
