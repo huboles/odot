@@ -45,21 +45,24 @@ Usage:
 
 Examples:
 
+    Add a task to default group:
+        $ odot new task
+
     Show tasks in default group:
         $ odot show
 
-    Add a task called 'things to do' to a group called newgroup:
+    Add a task to a group called newgroup:
         $ odot new -g newgroup things to do
 
-    Finish a task called 'thing I did' and show other completed tasks:
+    Finish a task and show other completed tasks:
         $ odot done thing I did -d
 
-    Show all completed tasks in a group called 'tasks':
+    Show all completed tasks in a group called tasks:
         $ odot show -dg tasks
 
     Show all tasks in database:
         $ odot show -da
         
-    Remove a task from database (completely removes task from odot's memory, useful for typos):
+    Remove a task from database (completely removes task from memory, useful for typos):
         $ odot remove task I want to forget
 
