@@ -4,7 +4,10 @@
 int showdone = 0,
     showall  = 0;
 
+u_int hash;
+
 char    *group,
+        *newgroup,
         *task,
         *action;
 
@@ -16,11 +19,12 @@ int main(int argc, char *argv[]){
     sqlcmd(db,BUILDTABLE);
 
 
-    group = malloc(MAXLINE * sizeof(char));
-    task = malloc(MAXLINE * sizeof(char));
-    action = malloc(MAXLINE * sizeof(char));
+    group = calloc(MAXLINE,sizeof(char));
+    task = calloc(MAXLINE,sizeof(char));
+    action = calloc(MAXLINE,sizeof(char));
     
     parseopt(argc,argv);
+    hash = genhash();
 
     operate(db);
 
@@ -44,12 +48,14 @@ void parseopt(int n, char **args){
             case 'g':
                 sprintf(group,"%s",optarg);
                 break;
+            case 'G':
+                sprintf(newgroup,"%s",optarg);
+                break;
             case '?':
                 printf("Unknown Option: %c\n", optopt);
         }
     }
 
-    sprintf(group,"%s",(strcmp(group,"") == 0) ? "" : group);
     sprintf(action,"%s",args[optind]);
 
     for (int j = optind + 1; j < n; j++){
@@ -62,23 +68,33 @@ void operate(sqlite3 *db){
     char *cmd = malloc(MAXLINE*sizeof(char));
 
     if (strcmp(action,"new") == 0){
-        sprintf(cmd,"%s%s' ,'%s', 0);",INSERT,task,group);
+        sprintf(cmd,"%s (%ui, '%s', '%s', 0);",INSERT,hash,task,group);
         sqlcmd(db,cmd);
     } else if (strcmp(action,"done") == 0){
-        sprintf(cmd,"%s%s';",DONE,task);
+        sprintf(cmd,"%s %ui;",DONE,hash);
         sqlcmd(db,cmd);
-        sprintf(cmd,"%s%s';", GETGROUP,task);
+
+        sprintf(cmd,"%s %ui;", GETGROUP,hash);
         sqlgroup(db,cmd);
-        sprintf(cmd,"SELECT Done, Task FROM Tasks WHERE Task = '%s'",task);
+
+        sprintf(cmd,"SELECT Done, Task FROM Tasks WHERE Hash = %ui",hash);
         printf("\n");
         sqlprint(db,cmd);
     } else if (strcmp(action,"remove") == 0){
-        sprintf(cmd,"%s%s';",DELETE,task);
+        sprintf(cmd,"%s %ui;",DELETE,hash);
+        sqlcmd(db,cmd);
+    } else if (strcmp(action,"update") == 0){
+        sprintf(cmd,"%s '%s' WHERE Hash = %ui;",CHANGEGROUP,newgroup,hash);          
         sqlcmd(db,cmd);
     } else if (strcmp(action,"show") != 0) {
         fprintf(stderr,"\033[33;1mUnknown subcommand\033[0m: %s\n",action);
     }
+
     printf("\n\t\033[35;1mTODO\033[0m: \033[36m%s\033[0m\n\n",group);
+    if (showdone < 1) {
+        sqlprint(db,PRINT);
+    }
+
     if (showall == 1) {
         if (showdone == 1) {
             sqlprint(db,PRINTALL);
@@ -87,15 +103,24 @@ void operate(sqlite3 *db){
         }
     } else {
         if (showdone == 1) {
-            sprintf(cmd,"%s%s' ORDER BY Done;",PRINTGROUPALL,group);
+            sprintf(cmd,"%s '%s' ORDER BY Done;",PRINTGROUPALL,group);
             sqlprint(db,cmd);
-        } else if (strcmp(group,"\t") != 0) {
-            sprintf(cmd,"%s%s';",PRINTGROUP,group);
+        } else if (strcmp(group,"") != 0) {
+            sprintf(cmd,"%s '%s';",PRINTGROUP,group);
             sqlprint(db,cmd);
         } else {
             sqlprint(db,PRINT);
         }
     }
+}
+
+u_int genhash(void){
+    char *tmp = malloc((strlen(task)+strlen(group)) * sizeof(char));
+    sprintf(tmp,"%s%s",task,group);
+    int h = 11235813;
+
+    while (*tmp++) h = (~(h << 5) ^ *tmp);
+    return h;
 }
 
 char *filepath(void){

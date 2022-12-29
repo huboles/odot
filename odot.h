@@ -11,22 +11,24 @@
 
 #define MAXLINE 10000
 
-#define BUILDTABLE "CREATE TABLE IF NOT EXISTS Tasks (Task varchar(1000) NOT NULL PRIMARY KEY, Type varchar(8), Done int NOT NULL DEFAULT 0);"
+#define BUILDTABLE "CREATE TABLE IF NOT EXISTS Tasks (Hash int NOT NULL PRIMARY KEY, Task varchar(1000) NOT NULL, Type varchar(8), Done int NOT NULL DEFAULT 0);"
 
-#define INSERT "INSERT INTO Tasks VALUES ( '"
-#define DELETE "DELETE FROM Tasks WHERE Task = '"
-#define DONE "UPDATE Tasks SET Done = 1 WHERE Task = '"
-#define GETGROUP "SELECT Type FROM Tasks WHERE Task = '"
+#define INSERT "INSERT INTO Tasks VALUES"
+#define DELETE "DELETE FROM Tasks WHERE Hash ="
+#define DONE "UPDATE Tasks SET Done = 1 WHERE Hash ="
+#define GETGROUP "SELECT Type FROM Tasks WHERE Hash ="
+#define CHANGEGROUP "UPDATE Tasks SET Group ="
 #define PRINT "SELECT Done, Type, Task FROM Tasks WHERE Done = 0 ORDER BY Type;"
 #define PRINTALL "SELECT Done, Type, Task FROM Tasks ORDER BY Type;"
-#define PRINTGROUP "SELECT Done, Task FROM Tasks WHERE Done = 0 AND Type = '"
-#define PRINTGROUPALL "SELECT Done, Task FROM Tasks WHERE Type = '"
+#define PRINTGROUP "SELECT Done, Task FROM Tasks WHERE Done = 0 AND Type ="
+#define PRINTGROUPALL "SELECT Done, Task FROM Tasks WHERE Type ="
 
 char *filepath(void);
 void error(int);
 void help(void);
 void parseopt(int, char**);
 void operate(sqlite3 *);
+u_int genhash(void);
 
 /* functions for interfacing with database: database.c */
 sqlite3 *accessdb(char *);
