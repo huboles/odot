@@ -1,8 +1,11 @@
 #include "odot.h"
 
 extern char *group,
+            *newgroup,
             *task;
 
+extern u_long hash;
+extern int exists;
 
 sqlite3 *accessdb(char *file){
     sqlite3 *db;
@@ -13,27 +16,25 @@ sqlite3 *accessdb(char *file){
     return db;
 }
 
-void sqlcmd(sqlite3 *db, char *cmd){
-    int err = sqlite3_exec(db,cmd,NULL,NULL,NULL);
+void sqlcmd(sqlite3 *db, char *cmd, char action){
+    int err;
+    switch (action) {
+        case 'q':
+            err = sqlite3_exec(db,cmd,NULL,NULL,NULL);
+            break;
+        case 'p':
+            err = sqlite3_exec(db,cmd,printcallback,0,NULL);
+            break;
+        case 't':
+            err = sqlite3_exec(db,cmd,taskcallback,0,NULL);
+            break;
+        case 'c':
+            err = sqlite3_exec(db,cmd,taskcallback,0,NULL);
+            break;
+    }
     if (err) sqlerror(db); 
     return;
-
 }
-
-void sqlprint(sqlite3 *db, char *cmd){
-    int err = sqlite3_exec(db,cmd,printcallback,0,NULL);
-    if (err) sqlerror(db); 
-    return;
-
-}
-
-void sqlgroup(sqlite3 *db, char *cmd){
-    int err = sqlite3_exec(db,cmd,groupcallback,0,NULL);
-    if (err) sqlerror(db); 
-    return;
-
-}
-
 
 void sqlerror(sqlite3 *db) {
     fprintf(stderr, "%s\n", sqlite3_errmsg(db));
@@ -43,7 +44,8 @@ void sqlerror(sqlite3 *db) {
 
 int printcallback(void *unused,int argc, char **argv, char **name){
     int i = 1;
-
+        
+        /* print group if it changes */
     if (argv[2]){
         char *g = malloc(strlen(argv[1])*sizeof(char));
         sprintf(g,"%s",argv[1]);
@@ -59,7 +61,19 @@ int printcallback(void *unused,int argc, char **argv, char **name){
     return 0;
 }
 
-int groupcallback(void *unused,int argc, char **argv, char **name){
-    strcpy(group,argv[0]);
+int taskcallback(void *unused,int argc, char **argv, char **name){
+    sprintf(task,"%s",argv[0]);
+    sprintf(group,"%s",argv[1]);
+    hash = strtoul(argv[2],NULL,10);
+    return 0;
+}
+
+int checkcallback(void *unused,int argc, char **argv, char **name){
+    if (exists == 1) return 0;
+    if (hash == strtoul(argv[2],NULL,10)) {
+        exists = 1;
+    } else if (strcmp(task,argv[0]) == 0) {
+        checksame(task,argv[1]);
+    }
     return 0;
 }

@@ -2,9 +2,10 @@
 
 /* global variables */ 
 int showdone = 0,
-    showall  = 0;
+    showall  = 0,
+    exists   = 0;
 
-u_int hash;
+u_long hash;
 
 char    *group,
         *newgroup,
@@ -12,16 +13,25 @@ char    *group,
         *action;
 
 int main(int argc, char *argv[]){
-    if (argc == 1) help();
+    /* show help if no arguments unless its just showing tasks */
+    if (argc == 2 && strcmp(argv[1],"show") != 0) help();
 
     sqlite3 *db;
-    db = accessdb(filepath());
-    sqlcmd(db,BUILDTABLE);
+    int err = sqlite3_open(filepath(),&db);
+    sqlcmd(db,BUILDTABLE,'c');
 
+    /* show all tasks if called alone */
+    if (argc == 1) {
+        showall = 1;
+        show(db);
+        sqlite3_close(db);
+        exit(0);
+    }
 
     group = calloc(MAXLINE,sizeof(char));
     task = calloc(MAXLINE,sizeof(char));
     action = calloc(MAXLINE,sizeof(char));
+    newgroup = calloc(MAXLINE,sizeof(char));
     
     parseopt(argc,argv);
     hash = genhash();
@@ -34,7 +44,7 @@ int main(int argc, char *argv[]){
 
 void parseopt(int n, char **args){
     char c;
-    while ((c = getopt(n,args,"g:adh")) != -1){
+    while ((c = getopt(n,args,"g:G:adh")) != -1){
         switch (c) {
             case 'h':
                 help();
@@ -46,106 +56,25 @@ void parseopt(int n, char **args){
                 showdone = 1;
                 break;
             case 'g':
-                sprintf(group,"%s",optarg);
+                strcpy(group,optarg);
                 break;
             case 'G':
-                sprintf(newgroup,"%s",optarg);
+                strcpy(newgroup,optarg);
                 break;
             case '?':
-                printf("Unknown Option: %c\n", optopt);
+                error(4);
+                break;
         }
     }
 
-    sprintf(action,"%s",args[optind]);
+    /* get subcommand */
+    strcpy(action,args[optind]);
 
+    /* rest of arguments become task */
     for (int j = optind + 1; j < n; j++){
             strcat(task,args[j]);
             strcat(task,(j != n-1) ? " " : "");
     }
-}
-
-void operate(sqlite3 *db){
-    char *cmd = malloc(MAXLINE*sizeof(char));
-
-    if (strcmp(action,"new") == 0){
-        sprintf(cmd,"%s (%ui, '%s', '%s', 0);",INSERT,hash,task,group);
-        sqlcmd(db,cmd);
-    } else if (strcmp(action,"done") == 0){
-        sprintf(cmd,"%s %ui;",DONE,hash);
-        sqlcmd(db,cmd);
-
-        sprintf(cmd,"%s %ui;", GETGROUP,hash);
-        sqlgroup(db,cmd);
-
-        sprintf(cmd,"SELECT Done, Task FROM Tasks WHERE Hash = %ui",hash);
-        printf("\n");
-        sqlprint(db,cmd);
-    } else if (strcmp(action,"remove") == 0){
-        sprintf(cmd,"%s %ui;",DELETE,hash);
-        sqlcmd(db,cmd);
-    } else if (strcmp(action,"update") == 0){
-        sprintf(cmd,"%s '%s' WHERE Hash = %ui;",CHANGEGROUP,newgroup,hash);          
-        sqlcmd(db,cmd);
-    } else if (strcmp(action,"show") != 0) {
-        fprintf(stderr,"\033[33;1mUnknown subcommand\033[0m: %s\n",action);
-    }
-
-    printf("\n\t\033[35;1mTODO\033[0m: \033[36m%s\033[0m\n\n",group);
-    if (showdone < 1) {
-        sqlprint(db,PRINT);
-    }
-
-    if (showall == 1) {
-        if (showdone == 1) {
-            sqlprint(db,PRINTALL);
-        } else {
-            sqlprint(db,PRINT);
-        }
-    } else {
-        if (showdone == 1) {
-            sprintf(cmd,"%s '%s' ORDER BY Done;",PRINTGROUPALL,group);
-            sqlprint(db,cmd);
-        } else if (strcmp(group,"") != 0) {
-            sprintf(cmd,"%s '%s';",PRINTGROUP,group);
-            sqlprint(db,cmd);
-        } else {
-            sqlprint(db,PRINT);
-        }
-    }
-}
-
-u_int genhash(void){
-    char *tmp = malloc((strlen(task)+strlen(group)) * sizeof(char));
-    sprintf(tmp,"%s%s",task,group);
-    int h = 11235813;
-
-    while (*tmp++) h = (~(h << 5) ^ *tmp);
-    return h;
-}
-
-char *filepath(void){
-    char *dir = getenv("XDG_DATA_HOME");
-    char *db = malloc(MAXLINE * sizeof(char));
-
-    if (!dir) {
-        dir = getenv("HOME");    
-        if (!dir) error(3);
-        strcat(dir,"/.local/share");
-    }
-    strcat(dir,"/odot");
-
-    DIR *test = opendir(dir);
-
-    if (test) {
-        closedir(test);
-    } else {
-        int err = mkdir(dir, 0777);
-        if (err) error(2);
-    }
-
-    sprintf(db,"%s/odot.db",dir);
-
-    return db;
 }
 
 void error(int err){
@@ -159,6 +88,9 @@ void error(int err){
         case 3:
             fprintf(stderr,"Could not determine $HOME\n");
             break;
+        case 4:
+            fprintf(stderr,"Unknown Command\n");
+            help();
     }
     exit(err);
 }
