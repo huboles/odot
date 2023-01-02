@@ -5,14 +5,15 @@ DESTDIR = $(PREFIX)/bin
 PROG = odot
 
 CC = gcc
-CFILE = $(PROG).c database.c
+CFILE = $(PROG).c database.c actions.c function.c
 HEADER = $(PROG).h sqlite3.h
-OBJECTS = $(PROG).o database.o task.o sqlite3.o
+OBJECTS = $(PROG).o database.o actions.o function.o sqlite3.o
 LDFLAGS = -L .
 LDLIBS = -lpthread
-CFLAGS = -Wall -Wextra -O2
+CFLAGS = -O2
+WARNINGS = -Werror -Wall -Wextra -Wpedantic -Wconversion -Wformat=2 -Wformat-signedness -Wstrict-prototypes -Wshadow -Wno-unused
 CPPFLAGS = -I . 
-ALL_CFLAGS = $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) $(LDLIBS)
+ALL_CFLAGS = $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) $(LDLIBS) $(WARNINGS)
 
 sql: sqlite3.c
 	$(CC) sqlite3.c $(CFLAGS) -c
@@ -30,7 +31,8 @@ build: $(CFILE) $(HEADER) sqlite3.c
 	$(CC) $(CFILE) sqlite3.c $(CFLAGS) -o $(PROG)
 
 install: $(CFILE) $(HEADER) sqlite3.c
-	$(CC) $(CFILE) sqlite3.c $(CFLAGS) -o $(DESTDIR)/$(PROG)
+	$(CC) $(CFILE) sqlite3.c $(CFLAGS) -o $(PROG)
+	install -CDTm 755 $(PROG) $(DESTDIR)/$(PROG)
 
 debug: $(CFILE)
 	$(CC) $(CFILE) sqlite3.o $(CFLAGS) -ggdb3 -Og -o $(PROG)

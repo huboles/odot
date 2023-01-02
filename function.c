@@ -10,12 +10,14 @@ extern u_long hash;
 extern int exists;
 
 u_long genhash(void){
-    char *tmp = malloc((strlen(task)+strlen(group)+1) * sizeof(char));
+    char *tmp = calloc((strlen(task)+strlen(group)+1), sizeof(char));
     strcat(tmp,task);
     strcat(tmp,group);
     int h = 11235813;
 
-    while (*tmp++) h = (~(h << 5) ^ *tmp);
+    for (int i = 0; i < strlen(tmp);i++)
+        h = ~((h << 5) ^ tmp[i]);
+
     return h;
 }
 
@@ -41,7 +43,7 @@ char *filepath(void){
         if (err) error(2);
     }
 
-    strcat(db,dir);
+    sprintf(db,"%s/odot.db",dir);
 
     return db;
 }

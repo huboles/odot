@@ -7,17 +7,8 @@ extern char *group,
 extern u_long hash;
 extern int exists;
 
-sqlite3 *accessdb(char *file){
-    sqlite3 *db;
-
-    int err = sqlite3_open(file, &db);
-    if (err) sqlerror(db); 
-
-    return db;
-}
-
 void sqlcmd(sqlite3 *db, char *cmd, char action){
-    int err;
+    int err = 0;
     switch (action) {
         case 'q':
             err = sqlite3_exec(db,cmd,NULL,NULL,NULL);
@@ -29,10 +20,10 @@ void sqlcmd(sqlite3 *db, char *cmd, char action){
             err = sqlite3_exec(db,cmd,taskcallback,0,NULL);
             break;
         case 'c':
-            err = sqlite3_exec(db,cmd,taskcallback,0,NULL);
+            err = sqlite3_exec(db,cmd,checkcallback,0,NULL);
             break;
     }
-    if (err) sqlerror(db); 
+    if (err < 0) sqlerror(db); 
     return;
 }
 
