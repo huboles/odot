@@ -4,7 +4,7 @@ extern char *group,
             *newgroup,
             *task;
 
-extern u_long hash;
+extern int hash;
 extern int exists;
 
 void sqlcmd(sqlite3 *db, char *cmd, char action){
@@ -61,7 +61,7 @@ int taskcallback(void *unused,int argc, char **argv, char **name){
 
 int checkcallback(void *unused,int argc, char **argv, char **name){
     if (exists == 1) return 0;
-    if (hash == strtoul(argv[2],NULL,10)) {
+    if (hash == (int) strtoul(argv[2],NULL,10)) {
         exists = 1;
     } else if (strcmp(task,argv[0]) == 0) {
         checksame(task,argv[1]);

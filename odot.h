@@ -11,9 +11,10 @@
 
 #define VERSION "0.2.1"
 #define MAXLINE 10000
+#define TABLE_SIZE 65535
 
 /* sql commands */ 
-#define BUILDTABLE "CREATE TABLE IF NOT EXISTS Tasks (Hash int NOT NULL PRIMARY KEY, Task varchar(10000) NOT NULL, Type varchar(32), Done int NOT NULL DEFAULT 0, Timestamp DATETIME DEFAULT CURRENT_TIMESTAMP, Duedate DATETIME);"
+#define BUILDTABLE "CREATE TABLE IF NOT EXISTS Tasks (Hash int NOT NULL PRIMARY KEY, Task varchar(10000) NOT NULL, Type varchar(32), Done int NOT NULL DEFAULT 0);"
 
 #define INSERT "INSERT INTO Tasks VALUES"
 #define DELETE "DELETE FROM Tasks WHERE Hash ="
@@ -43,7 +44,7 @@ void show(sqlite3 *);
 
 /* function.c */
 char *filepath(void);
-u_long genhash(void);
+int genhash(char *);
 void checksame(char *, char *);
 
 /* functions for interfacing with sqlite database: database.c */

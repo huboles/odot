@@ -6,7 +6,7 @@ int showdone = 0,
     quiet    = 0,
     exists   = 0;
 
-u_long hash;
+int hash;
 
 char    *group,
         *newgroup,
@@ -36,7 +36,11 @@ int main(int argc, char *argv[]){
     newgroup = calloc(MAXLINE,sizeof(char));
     
     parseopt(argc,argv);
-    hash = genhash();
+    char *hashstring = malloc((strlen(task)+strlen(group)+1)*sizeof(char));
+    strcpy(hashstring, task);
+    strcat(hashstring,group);
+    hash = genhash(hashstring);
+    free(hashstring);
 
     /* checks if task already exists in db */
     dbcheck(db);

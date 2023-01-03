@@ -4,7 +4,7 @@ extern char *task,
             *group,
             *newgroup;
 
-extern u_long hash;
+extern int hash;
 
 extern int  exists,
             showall,
@@ -14,7 +14,7 @@ void newtask(sqlite3 *db){
     char *cmd = malloc(MAXLINE*sizeof(char));
 
     if (exists == 0){
-        sprintf(cmd,"%s (%lu, '%s', '%s', 0);",INSERT,hash,task,group);
+        sprintf(cmd,"%s (%i, '%s', '%s', 0);",INSERT,hash,task,group);
         sqlcmd(db,cmd,'q');
     } else {
         printf("Task already exists\nMark as done? [y/(n)] ");
@@ -28,14 +28,14 @@ void done(sqlite3 *db){
     char *cmd = malloc(MAXLINE*sizeof(char));
 
     if (exists == 1) {
-        sprintf(cmd,"%s %lu;",DONE,hash);
+        sprintf(cmd,"%s %i;",DONE,hash);
         sqlcmd(db,cmd,'q');
 
-        sprintf(cmd,"%s %lu;", GETTASK,hash);
+        sprintf(cmd,"%s %i;", GETTASK,hash);
         sqlcmd(db,cmd,'t');
 
         printf("\n");
-        sprintf(cmd,"SELECT Done, Task FROM Tasks WHERE Hash = %lu;",hash);
+        sprintf(cmd,"SELECT Done, Task FROM Tasks WHERE Hash = %i;",hash);
         sqlcmd(db,cmd,'p');
     } else {
         printf("Task does not exist\nAdd task [y/n] ");
@@ -52,7 +52,7 @@ void update(sqlite3 *db){
     char *cmd = malloc(MAXLINE*sizeof(char));
 
     if (exists == 1) {
-        sprintf(cmd,"%s '%s' WHERE Hash = %lu;",CHANGEGROUP,newgroup,hash);
+        sprintf(cmd,"%s '%s' WHERE Hash = %i;",CHANGEGROUP,newgroup,hash);
         sqlcmd(db,cmd,'q');
         strcpy(group,newgroup);
     } else {
@@ -67,7 +67,7 @@ void removetask(sqlite3 *db){
     char *cmd = malloc(MAXLINE*sizeof(char));
 
     if (exists == 1){
-        sprintf(cmd,"%s %lu;",DELETE,hash);
+        sprintf(cmd,"%s %i;",DELETE,hash);
         sqlcmd(db,cmd,'c');
     }
     free(cmd);

@@ -1,4 +1,4 @@
-odot
+odot v0.2.1
 
 Task manager written in C
 
@@ -12,16 +12,16 @@ Installation:
         $ mkdir odot && cd odot
 
             # Download source files
-        $ curl "https://download.huck.website/odot-0.2.0.tar.gz" > odot-0.2.0.tar.gz
+        $ curl "https://download.huck.website/odot-[VERSION].tar.gz" > odot-[VERSION].tar.gz
 
                     # Optional: Download and check pgp signature
-                $ curl "https://download.huck.website/odot-0.2.0.tar.gz.sig" > odot-0.2.0.tar.gz.sig
+                $ curl "https://download.huck.website/odot-[VERSION].tar.gz.sig" > odot-[VERSION].tar.gz.sig
                 $ curl "https://download.huck.website/pub.asc" > huck.asc
                 $ gpg --import huck.asc
-                $ gpg --verify odot-0.2.0.tar.gz.sig odot-0.2.0.tar.gz
+                $ gpg --verify odot-[VERSION].tar.gz.sig odot-[VERSION].tar.gz
 
             # Unpack source files
-        $ tar -xzvf odot-0.2.0.tar.gz 
+        $ tar -xzvf odot-[VERSION].tar.gz 
 
             # Build odot
     Global install:
@@ -40,12 +40,15 @@ Usage:
         new     Adds a new task to the list
         done    Marks a task on the list as complete
         show    Shows current tasks in database
+        update  Change group for a task
         remove  Remove task from database
 
     Available options:
-        -g (group)  Specify group for task
+        -g [group]  Specify group for task
         -a          Show all groups
         -d          Also show completed tasks
+        -q          Don't show tasks
+        -V          Display version
 
 Examples:
 

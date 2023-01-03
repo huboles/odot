@@ -5,20 +5,19 @@ extern char *group,
             *task,
             *action;
 
-extern u_long hash;
+extern int hash;
 
 extern int exists;
 
-u_long genhash(void){
-    char *tmp = calloc((strlen(task)+strlen(group)+1), sizeof(char));
-    strcat(tmp,task);
-    strcat(tmp,group);
-    int h = 11235813;
-
-    for (int i = 0; i < strlen(tmp);i++)
-        h = ~((h << 5) ^ tmp[i]);
-
-    return h;
+/* dgb hash */
+int genhash(char *str) {
+    u_int h=5381;
+    
+    for (int i = 0; i < (int) strlen(str); i++) {
+        h = ((h << 5) + h) + *str++;
+    }
+    
+    return h % TABLE_SIZE;
 }
 
 char *filepath(void){
@@ -54,7 +53,11 @@ void checksame(char *task,char *oldgroup){
     if (getchar() == 'y'){
         exists = 1; 
         strcpy(group,oldgroup); 
-        hash = genhash();
+        char *hashstring = malloc((strlen(task)+strlen(group)+1)*sizeof(char));
+        strcpy(hashstring, task);
+        strcat(hashstring,group);
+        hash = genhash(hashstring);
+        free(hashstring);
     } 
 
     return;
