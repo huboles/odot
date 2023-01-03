@@ -1,6 +1,7 @@
 SHELL = /bin/bash
 PREFIX = /usr
 DESTDIR = $(PREFIX)/bin
+MANDIR = $(PREFIX)/share/man
 
 PROG = odot
 
@@ -33,6 +34,7 @@ build: $(CFILE) $(HEADER) sqlite3.c
 install: $(CFILE) $(HEADER) sqlite3.c
 	$(CC) $(CFILE) sqlite3.c $(CFLAGS) -o $(PROG)
 	install -CDTm 755 $(PROG) $(DESTDIR)/$(PROG)
+	install -CDTm 644 $(PROG).1 $(MANDIR)/$(PROG).1
 
 debug: $(CFILE)
 	$(CC) $(CFILE) sqlite3.o $(CFLAGS) -ggdb3 -Og -o $(PROG)

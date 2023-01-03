@@ -14,7 +14,7 @@ char    *group,
         action;
 
 int main(int argc, char *argv[]){
-    /* show help if no arguments unless its just showing tasks */
+    /* show help if just subcommand called, unless its just showing tasks */
     if (argc == 2 && strcmp(argv[1],"show") != 0) help();
 
     int err = 0;
@@ -38,6 +38,7 @@ int main(int argc, char *argv[]){
     parseopt(argc,argv);
     hash = genhash();
 
+    /* checks if task already exists in db */
     dbcheck(db);
 
     switch (action){
@@ -57,7 +58,7 @@ int main(int argc, char *argv[]){
             /* always gets shown unless quiet is set */
             break;
         case '?':
-            error(4);
+            error(CMDERR);
     }
 
     /* show db after action */
@@ -96,7 +97,7 @@ void parseopt(int n, char **args){
                 strcpy(newgroup,optarg);
                 break;
             case '?':
-                error(4);
+                error(FLAGERR);
                 break;
         }
     }
@@ -113,20 +114,24 @@ void parseopt(int n, char **args){
 
 void error(int err){
     switch (err) {
-        case 1:
+        case SQLERR:
             fprintf(stderr,"^^ SQL error ^^\n");
             break;
-        case 2:
+        case DIRERR:
             fprintf(stderr,"Could not create odot directory\n\t$XDG_DATA_HOME/odot\n");
             break;
-        case 3:
+        case ENVERR:
             fprintf(stderr,"Could not determine $HOME\n");
             break;
-        case 4:
-            fprintf(stderr,"Unknown Command\n");
+        case FLAGERR:
+            fprintf(stderr,"Unknown Flag\n");
             help();
             break;
-        case 5:
+        case CMDERR:
+            fprintf(stderr,"Unknown Subcommand\n");
+            help();
+            break;
+        case GRPERR:
             fprintf(stderr,"Specify new group with -G\n");
             break;
     }
@@ -135,18 +140,21 @@ void error(int err){
 
 void help(){
     printf("Usage: odot [subcommand] (task)\n");
-    printf("\tSubcommands:\n");
+    printf("Subcommands:\n");
     printf("\tnew\tadd new task to database\n");
     printf("\tdone\tmark task as done in database\n");
     printf("\tupdate\tupdate task group, requires -G\n");
     printf("\tshow\tshow tasks in database\n");
     printf("\tremove\tremove task from database\t\n");
-    printf("\tOptions:\n");
+    printf("Option flags:\n");
     printf("\t-a\tshow all groups\n");
     printf("\t-d\talso show completed tasks\n");
     printf("\t-g\tset group for task\n");
     printf("\t-G\tnew group for update");
+    printf("\t-q\tdon't show tasks\n");
+    printf("\t-V\tversion information\n");
     printf("\t-h\tshow this help\n");
+
 
     exit(0);
 }

@@ -28,7 +28,7 @@ char *filepath(void){
     /* set dir to $HOME/.local/share if XDG isn't set */
     if (!dir) {
         dir = getenv("HOME");    
-        if (!dir) error(3);
+        if (!dir) error(ENVERR);
         strcat(dir,"/.local/share");
     }
     strcat(dir,"/odot");
@@ -40,7 +40,7 @@ char *filepath(void){
         closedir(test);
     } else {
         int err = mkdir(dir, 0777);
-        if (err) error(2);
+        if (err) error(DIRERR);
     }
 
     sprintf(db,"%s/odot.db",dir);

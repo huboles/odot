@@ -30,7 +30,7 @@ void sqlcmd(sqlite3 *db, char *cmd, char action){
 void sqlerror(sqlite3 *db) {
     fprintf(stderr, "%s\n", sqlite3_errmsg(db));
     sqlite3_close(db);
-    error(1);
+    error(SQLERR);
 }
 
 int printcallback(void *unused,int argc, char **argv, char **name){

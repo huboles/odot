@@ -12,6 +12,7 @@
 #define VERSION "0.2.1"
 #define MAXLINE 10000
 
+/* sql commands */ 
 #define BUILDTABLE "CREATE TABLE IF NOT EXISTS Tasks (Hash int NOT NULL PRIMARY KEY, Task varchar(10000) NOT NULL, Type varchar(32), Done int NOT NULL DEFAULT 0, Timestamp DATETIME DEFAULT CURRENT_TIMESTAMP, Duedate DATETIME);"
 
 #define INSERT "INSERT INTO Tasks VALUES"
@@ -24,10 +25,13 @@
 #define PRINTGROUP "SELECT Done, Task FROM Tasks WHERE Done = 0 AND Type ="
 #define PRINTGROUPALL "SELECT Done, Task FROM Tasks WHERE Type ="
 
+/* error handling */
+enum {SQLERR = 1, DIRERR = 1 << 1, ENVERR = 1 << 2, FLAGERR = 1 << 3, CMDERR = 1 << 4, GRPERR = 1 << 5};
+
+/* main.c */
 void error(int);
 void help(void);
 void parseopt(int, char **);
-void operate(sqlite3 *);
 
 /* action.c */
 void dbcheck(sqlite3 *db);

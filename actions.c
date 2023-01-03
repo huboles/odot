@@ -48,7 +48,7 @@ void done(sqlite3 *db){
 
 void update(sqlite3 *db){
     /* terminates if newgroup isn't set*/
-    if (strcmp(newgroup,"") == 0) error(5);
+    if (strcmp(newgroup,"") == 0) error(GRPERR);
     char *cmd = malloc(MAXLINE*sizeof(char));
 
     if (exists == 1) {
