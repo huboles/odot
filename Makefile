@@ -42,6 +42,7 @@ debug: $(CFILE)
 clean: 
 	[[ -f $(PROG) ]] && rm $(PROG)
 	[[ -f $(DESTDIR)/$(PROG) ]] && sudo rm $(DESTDIR)/$(PROG)
+	[[ -f $(MANDIR)/$(PROG).1.gz ]] && rm $(MANDIR)/$(PROG).1.gz
 
 dbclean:
 	rm *.db
