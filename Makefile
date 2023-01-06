@@ -1,20 +1,20 @@
 SHELL = /bin/bash
-DESTDIR = 
+DESTDIR ?= 
 PREFIX = $(DESTDIR)/usr
 BINDIR = $(PREFIX)/bin
 MANDIR = $(PREFIX)/share/man/man1
 
 PROG = odot
 
-CC = gcc
+CC ?= gcc
 CFILE = $(PROG).c database.c actions.c function.c
 HEADER = $(PROG).h sqlite3.h
 OBJECTS = $(PROG).o database.o actions.o function.o sqlite3.o
-LDFLAGS = -L .
-LDLIBS = -lpthread
-CFLAGS = -O2 
-WARNINGS = -Werror -Wall -Wextra -Wpedantic -Wno-unused
-CPPFLAGS = -I . 
+LDFLAGS += $(LDFLAGS) -L .
+LDLIBS += $(LDLIBS) -lpthread
+CFLAGS += $(CFLAGS) -O2 
+WARNINGS ?= -Werror -Wall -Wextra -Wpedantic -Wno-unused
+CPPFLAGS += $(CPPFLAGX) -I . 
 ALL_CFLAGS = $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) $(LDLIBS) $(WARNINGS)
 
 sql: sqlite3.c
@@ -32,13 +32,16 @@ link: $(OBJECTS)
 build: $(CFILE) $(HEADER) sqlite3.c
 	$(CC) $(CFILE) sqlite3.c $(ALL_CFLAGS) -o $(PROG)
 
+sqlbuild: $(CFILE) $(HEADER) sqlite3.o
+	$(CC) $(CFILE) sqlite3.o $(ALL_CFLAGS) -o $(PROG)
+
 install: $(CFILE) $(HEADER) sqlite3.c
 	$(CC) $(CFILE) sqlite3.c $(ALL_CFLAGS) -o $(PROG)
 	install -CDTm 755 $(PROG) $(BINDIR)/$(PROG)
 	gzip -cf $(PROG).1 > $(PROG).1.gz
 	install -CDTm 644 $(PROG).1.gz $(MANDIR)/$(PROG).1
 
-debug: $(CFILE)
+debug: $(CFILE) $(HEADER)
 	$(CC) $(CFILE) sqlite3.o $(CFLAGS) -ggdb3 -Og -o $(PROG)
 
 clean: 
