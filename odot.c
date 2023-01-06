@@ -144,13 +144,13 @@ void error(int err){
 
 void help(){
     printf("Usage: odot [subcommand] (task)\n");
-    printf("Subcommands:\n");
+    printf("\033[32mSubcommands\033[0m:\n");
     printf("\tnew\tadd new task to database\n");
     printf("\tdone\tmark task as done in database\n");
     printf("\tupdate\tupdate task group, requires -G\n");
     printf("\tshow\tshow tasks in database\n");
     printf("\tremove\tremove task from database\t\n");
-    printf("Option flags:\n");
+    printf("\033[33mOption flags\033[0m:\n");
     printf("\t-a\tshow all groups\n");
     printf("\t-d\talso show completed tasks\n");
     printf("\t-g\tset group for task\n");
@@ -158,7 +158,6 @@ void help(){
     printf("\t-q\tdon't show tasks\n");
     printf("\t-V\tversion information\n");
     printf("\t-h\tshow this help\n");
-
 
     exit(0);
 }
