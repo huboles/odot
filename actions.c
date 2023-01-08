@@ -11,7 +11,8 @@ extern int  exists,
             showdone;
 
 void newtask(sqlite3 *db){
-    char *cmd = malloc(MAXLINE*sizeof(char));
+    int len = 45+strlen(group)+strlen(task);
+    char *cmd = malloc(len*sizeof(char));
 
     if (exists == 0){
         sprintf(cmd,"%s (%i, '%s', '%s', 0);",INSERT,hash,task,group);

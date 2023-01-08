@@ -22,7 +22,7 @@ int genhash(char *str) {
 
 char *filepath(void){
     char *dir = getenv("XDG_DATA_HOME");
-    char *db = malloc(MAXLINE * sizeof(char));
+    char *database = malloc(MAXLINE * sizeof(char));
 
     /* set dir to $HOME/.local/share if XDG isn't set */
     if (!dir) {
@@ -42,9 +42,10 @@ char *filepath(void){
         if (err) error(DIRERR);
     }
 
-    sprintf(db,"%s/odot.db",dir);
+    sprintf(database,"%s/odot.db",dir);
+    free(dir);
 
-    return db;
+    return database;
 }
 
 void checksame(char *task,char *oldgroup){

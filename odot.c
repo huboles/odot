@@ -19,8 +19,14 @@ int main(int argc, char *argv[]){
 
     int err = 0;
     sqlite3 *db;
-    err = sqlite3_open(filepath(),&db);
+
+    char *dbpath = malloc(MAXLINE*sizeof(char));
+    dbpath = filepath();
+    err = sqlite3_open(dbpath,&db);
+    free(dbpath);
+
     if (err < 0) sqlerror(db);
+
     sqlcmd(db,BUILDTABLE,'c');
 
     /* show all tasks if called alone */
