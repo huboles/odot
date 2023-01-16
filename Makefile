@@ -17,6 +17,9 @@ WARNINGS ?= -Werror -Wall -Wextra -Wpedantic -Wno-unused
 CPPFLAGS += $(CPPFLAGX) -I . 
 ALL_CFLAGS = $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) $(LDLIBS) $(WARNINGS)
 
+build: $(CFILE) $(HEADER) sqlite3.c
+	$(CC) $(CFILE) sqlite3.c $(ALL_CFLAGS) -o $(PROG)
+
 sql: sqlite3.c
 	$(CC) sqlite3.c $(ALL_CFLAGS) -c
 
@@ -28,9 +31,6 @@ compile: $(CFILE)
 
 link: $(OBJECTS)
 	$(CC) $(OBJECTS) $(ALL_CFLAGS) -o $(PROG)
-
-build: $(CFILE) $(HEADER) sqlite3.c
-	$(CC) $(CFILE) sqlite3.c $(ALL_CFLAGS) -o $(PROG)
 
 sqlbuild: $(CFILE) $(HEADER) sqlite3.o
 	$(CC) $(CFILE) sqlite3.o $(ALL_CFLAGS) -o $(PROG)
