@@ -3,32 +3,16 @@ odot v0.2.1
 Task manager written in C
 
 Installation:
+    
+    Download source files
+        $ curl "https://download.huck.website/odot-[VERSION].tar.gz" > odot.tar.gz
 
-    - Arch Linux: Available in the AUR
+    Unpack source files
+        $ tar -xzvf odot.tar.gz 
+        $ cd odot
 
-    - Manual: 
-
-            # Make and enter directory for odot
-        $ mkdir odot && cd odot
-
-            # Download source files
-        $ curl "https://download.huck.website/odot-[VERSION].tar.gz" > odot-[VERSION].tar.gz
-
-                    # Optional: Download and check pgp signature
-                $ curl "https://download.huck.website/odot-[VERSION].tar.gz.sig" > odot-[VERSION].tar.gz.sig
-                $ curl "https://download.huck.website/pub.asc" > huck.asc
-                $ gpg --import huck.asc
-                $ gpg --verify odot-[VERSION].tar.gz.sig odot-[VERSION].tar.gz
-
-            # Unpack source files
-        $ tar -xzvf odot-[VERSION].tar.gz 
-
-            # Build odot
-    Global install:
-        $ sudo make install
-    Local install:
-        $ make clean sql build
-            
+    Build odot
+        $ make && sudo make install
 
 Usage:
 
@@ -53,16 +37,16 @@ Usage:
 Examples:
 
     Add a task to default group:
-        $ odot new task
+        $ odot new "task"
 
     Show tasks in default group:
         $ odot show
 
     Add a task to a group called newgroup:
-        $ odot new -g newgroup things to do
+        $ odot new -g newgroup "things to do"
 
     Finish a task and show other completed tasks:
-        $ odot done thing I did -d
+        $ odot done "thing I did" -d
 
     Show all completed tasks in a group called tasks:
         $ odot show -dg tasks
@@ -71,5 +55,5 @@ Examples:
         $ odot show -da
         
     Remove a task from database (completely removes task from memory, useful for typos):
-        $ odot remove task I want to forget
+        $ odot remove "task I want to forget"
 

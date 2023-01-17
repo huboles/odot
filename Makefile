@@ -1,53 +1,57 @@
-SHELL = /bin/bash
-DESTDIR ?= 
-PREFIX = $(DESTDIR)/usr
-BINDIR = $(PREFIX)/bin
-MANDIR = $(PREFIX)/share/man/man1
-
 PROG = odot
+VERSION ?= 0.2.1
+
+SHELL = /bin/bash
+
+DESTDIR ?= 
+PREFIX ?= $(DESTDIR)/usr
+BINDIR ?= $(PREFIX)/bin
+LIBDIR ?= $(PREFIX)/lib
+MANDIR ?= $(PREFIX)/share/man/man1
+
+FILES ?= $(wildcard *.c) 
+HEADERS ?= $(wildcard *.h)
+OBJECTS ?= $(wildcard *.o)
 
 CC ?= gcc
-CFILE = $(PROG).c database.c actions.c function.c
-HEADER = $(PROG).h sqlite3.h
-OBJECTS = $(PROG).o database.o actions.o function.o sqlite3.o
-LDFLAGS += -L .
-LDLIBS += -lpthread
-CFLAGS += -O3 
+CFLAGS += -O2 -std=c17 -pipe
 WARNINGS ?= -Werror -Wall -Wextra -Wpedantic -Wno-unused
-CPPFLAGS += $(CPPFLAGX) -I . 
-ALL_CFLAGS = $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) $(LDLIBS) $(WARNINGS)
+CPPFLAGS += -I . 
+LDFLAGS += -L .
+LDLIBS +=
+ALL_FLAGS = $(CPPFLAGS) $(CFLAGS) $(WARNINGS) $(LDFLAGS) $(LDLIBS)
 
-build: $(CFILE) $(HEADER) sqlite3.c
-	$(CC) $(CFILE) sqlite3.c $(ALL_CFLAGS) -o $(PROG)
+.PHONY: all
+all: $(FILES) $(HEADERS)
+	$(CC) $(FILES) $(ALL_FLAGS) -o $(PROG)
 
-sql: sqlite3.c
-	$(CC) sqlite3.c $(ALL_CFLAGS) -c
-
-header: $(HEADER)
-	$(CC) $(HEADER) $(ALL_CFLAGS) -c
-
-compile: $(CFILE)
-	$(CC) $(CFILE) $(ALL_CFLAGS) -c
-
-link: $(OBJECTS)
-	$(CC) $(OBJECTS) $(ALL_CFLAGS) -o $(PROG)
-
-sqlbuild: $(CFILE) $(HEADER) sqlite3.o
-	$(CC) $(CFILE) sqlite3.o $(ALL_CFLAGS) -o $(PROG)
-
-install: $(CFILE) $(HEADER) sqlite3.c
-	$(CC) $(CFILE) sqlite3.c $(ALL_CFLAGS) -o $(PROG)
+.PHONY: install
+install: $(PROG) $(PROG).1
 	install -CDTm 755 $(PROG) $(BINDIR)/$(PROG)
-	gzip -cf $(PROG).1 > $(PROG).1.gz
-	install -CDTm 644 $(PROG).1.gz $(MANDIR)/$(PROG).1
+	[[ -e $(PROG).1 ]] && gzip -fc $(PROG).1 > $(MANDIR)/$(PROG).1.gz
 
-debug: $(CFILE) $(HEADER)
-	$(CC) $(CFILE) sqlite3.o $(CFLAGS) -ggdb3 -Og -o $(PROG)
+.PHONY: tar
+tar: $(FILES) $(HEADERS) $(PROG).1 Makefile README LICENSE
+	tar -g gzip -cf $(PROG)-$(VERSION).tar.gz $(FILES) $(HEADERS) $(PROG).1 Makefile README LICENSE
 
+.PHONY: compile
+compile: $(FILES)
+	$(CC) $(FILES) $(ALL_FLAGS) -c
+
+.PHONY: link
+link: $(OBJECTS)
+	$(CC) $(OBJECTS) $(ALL_FLAGS) -o $(PROG)
+
+.PHONY: assemble
+assemble: $(FILES)
+	$(CC) $(FILES) $(ALL_FLAGS) -S
+
+.PHONY: debug
+debug: $(FILES)
+	$(CC) $(FILES) $(ALL_FLAGS) -ggdb3 -Og -o $(PROG)
+
+.PHONY: clean
 clean: 
+	[[ -f $(BINDIR)/$(PROG) ]] && rm $(BINDIR)/$(PROG)
 	[[ -f $(PROG) ]] && rm $(PROG)
-	[[ -f $(DESTDIR)/$(PROG) ]] && sudo rm $(BINDIR)/$(PROG)
-
-dbclean:
-	rm *.db
 
