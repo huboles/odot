@@ -1,0 +1,57 @@
+ odot v0.3.0
+ 
+ Task manager written in C
+ 
+ Installation:
+     
+     Download source files
+         $ curl "https://download.huck.website/odot-[VERSION].tar.gz" > odot.tar.gz
+ 
+     Unpack source files
+         $ tar -xzvf odot.tar.gz 
+         $ cd odot
+ 
+     Build odot
+         $ make && sudo make install
+ 
+ Usage:
+ 
+     Results are modified by options preceded by a dash.
+     The rest of the line is parsed into a task.
+ 
+     Available flags:
+         -g [group]  Specify group for task
+         -n          Add new task
+         -x          Mark task as done
+         -s          Show tasks
+         -a          Show all groups
+         -d          Also show completed tasks
+         -A          Show all tasks in database
+         -r          Remove task from database
+         -V          Display version
+         -c          Remove color
+ 
+ Examples:
+ 
+     Add a task to default group:
+         $ odot -n "task"
+ 
+     Show tasks in default group:
+         $ odot
+ 
+     Add a task to a group called newgroup:
+         $ odot -ng newgroup "things to do"
+ 
+     Finish a task and show other completed tasks:
+         $ odot -x "thing I did" -d
+ 
+     Show all completed tasks in a group called tasks:
+         $ odot -dg tasks
+ 
+     Show all tasks in database:
+         $ odot -A
+         
+     Remove a task from database (completely removes task from memory, useful for typos):
+         $ odot -r "task I want to forget"
+ 
+
