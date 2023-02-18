@@ -1,8 +1,10 @@
 *
 !.gitignore
-!sha256sums
 !LICENSE
 !README
+!LICENSE
 !Makefile
+!src/
 !*.c
 !*.h
+!*.1
