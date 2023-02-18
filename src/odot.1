@@ -1,0 +1,161 @@
+.TH odot 1 2023-01-01 0.2.1 "User Commands"
+
+.Sh NAME
+.B odot
+- A command line task manager, with memory of completed tasks. 
+.B odot
+also allows grouping tasks together, and the ability to move a task between groups.
+
+.SH SYNOPSIS
+.B odot 
+.I SUBCOMMAND 
+[OPTIONS] TASK
+
+.SH DESCRIPTION
+.B odot
+uses a
+.B sqlite3 
+database to keep track of tasks. Each task can be added to a group if desired. 
+Completed tasks are retained in the database, and can be recalled at will. Tasks can also be removed from the database if they are no longer relevant or needed.
+
+.SH FLAGS
+.PP
+.B -a
+.RS
+Show all groups.
+.RE
+.PP
+.B -d
+.RS
+Show tasks marked done.
+.RE
+.PP
+.B -A
+.RS
+Show all tasks in database.
+.RE
+.PP
+.B -g
+.I [GROUP]
+.RS
+Specifies group.
+.RE
+.PP
+.B -n
+.I [TASK]
+.RS
+Add a new task.
+.RE
+.PP
+.B -x
+.I [TASK]
+.RS
+Marks a task as done.
+.RE
+.PP
+.B -r
+.I [TASK]
+.RS
+Removes task from database.
+.RE
+.PP
+.B -n
+.I [TASK]
+.RS
+Add a new task.
+.RE
+.PP
+.B -c
+.RS
+Turn off colors.
+.RE
+.PP
+.B -h
+.RS
+Show help.
+.RE
+.PP
+.B -V
+.RS
+Show version information.
+.RE
+
+.SH EXIT STATUS
+.TP
+0
+Succesful
+.TP
+1
+System Error
+.TP
+>1
+Internal Error
+
+.SH FILES
+.TP
+.I /usr/bin/odot
+.TP
+.BI $XDG_DATA_HOME /odot/odot.db
+
+
+.SH EXAMPLES
+.PP
+.B odot
+.I 
+.TP
+.PP
+Show all tasks with no group.
+.PP
+.B odot
+.I -n 
+foo bar
+.TP
+.PP
+Add a task "foo bar".
+.PP
+.B odot
+.I -n
+foo
+.I -g
+bar
+.TP
+.PP
+Add a task "foo" to group "bar".
+.PP
+.B odot
+.I -x
+foo bar
+.TP
+.PP
+Mark task "foo bar" as done.
+.PP
+.B odot
+.I -g
+foo
+.TP
+.PP
+Show tasks in group "foo".
+.PP
+.B odot
+.I -sA
+foo
+.TP
+.PP
+Show all tasks in all groups, including those marked done.
+.PP
+.B odot
+.I -r
+foo
+.TP
+.PP
+Remove task "foo" from the database.
+
+
+.SH CREDITS
+.PP
+Created by Huck Boles <huboles@protonmail.com>
+.PP
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.
+This is free software: you are free to change and redistribute it. 
+There is NO WARRANTY, to the extent permitted by law.
+
